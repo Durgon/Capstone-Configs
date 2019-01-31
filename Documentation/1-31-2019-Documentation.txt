@@ -1,0 +1,11 @@
+1) Configured the primary HO Server Management Switch for hypervisor connectivity & management
+  -DHCP
+  -VLAN
+  -Access & Trunk ports
+2) Configure vSphere Management Network to listen for VLAN 30 tagged packets
+  -Networking>Port Groups>Management Network>Edit Settings: VLAN ID = 30
+3) Configure Server Management Switch ports connected to vSphere server as trunk ports
+  switchport trunk allowed vlan 30
+  switchport mode trunk
+  switchport nonegotiate
+  spanning-tree portfast trunk
