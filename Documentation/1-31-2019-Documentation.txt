@@ -9,3 +9,10 @@
   switchport mode trunk
   switchport nonegotiate
   spanning-tree portfast trunk
+4) Created a vMotion VMKernel (VMK) NIC for Server Bridging & vMotion capabilities
+  -Dell Server:
+    ->Server Bridge vswitch with vmnic4 & portgroup Bridge
+    -> VMK1 (Bridge) with ^^, IP address 192.168.1.1/30
+  -HP Server:
+    ->Server Bridge vswitch with vmnic3 & portgroup Bridge
+    -> VMK1 (Bridge) with ^^, IP address 192.168.1.2/30
