@@ -1,0 +1,5 @@
+1) Configure vCenter SA
+  -IP Address: 170.1.10.10/24
+  -D/G: 172.1.10.1
+  -DNS server: 172.1.10.252
+  -hostname: vcenter.glowingearth.org
