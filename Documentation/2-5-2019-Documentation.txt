@@ -1,0 +1,2 @@
+1) Assigned licenses to vSphere ESXI Servers
+2)
