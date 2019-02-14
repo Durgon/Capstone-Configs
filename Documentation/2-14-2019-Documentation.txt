@@ -1,0 +1,6 @@
+1)Configured vCenter SSO
+  -domain: vcenter.local
+  -username: administrator
+  -password: **standard**
+  -site: HeadOffice
+2)
