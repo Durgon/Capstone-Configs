@@ -1,5 +1,6 @@
 hostname HO-ASA
-enable password 8Ry2YjIyt7RRXU24 encrypted
+domain-name glowingearth.org
+enable password 2KFQnbNIdI.2KYOU encrypted
 xlate per-session deny tcp any4 any4
 xlate per-session deny tcp any4 any6
 xlate per-session deny tcp any6 any4
@@ -14,28 +15,25 @@ zone OUTSIDE
 zone DMZ
 !
 interface GigabitEthernet1/1
- no shutdown
- nameif CONN_VPN
- security-level 0
- zone-member OUTSIDE
+ description Internet connection for Edmonton HO
+ no nameif
+ no security-level
  no ip address
 !
 interface GigabitEthernet1/2
-  no shutdown
-  nameif CONN_INTERNET
-  security-level 0
-  zone-member OUTSIDE
-  no ip address
+ no nameif
+ no security-level
+ no ip address
 !
 interface GigabitEthernet1/3
- no shutdown
+ description Interface connected to the Cisco Router at Edmonton HO
  nameif TO_CISCO
  security-level 100
  zone-member INSIDE
  ip address 172.1.8.1 255.255.255.252
 !
 interface GigabitEthernet1/4
- no shutdown
+ description Interface connected to the HP router at the Edmonton HO
  nameif TO_HP
  security-level 100
  zone-member INSIDE
@@ -72,15 +70,83 @@ interface Management1/1
  no security-level
  no ip address
 !
+interface Redundant1
+ description External connection to outside
+ member-interface GigabitEthernet1/1
+ member-interface GigabitEthernet1/2
+ nameif OUTSIDE-CONN
+ security-level 0
+ zone-member OUTSIDE
+ ip address 10.100.201.238 255.255.254.0
+!
 ftp mode passive
+dns domain-lookup TO_CISCO
+dns server-group DefaultDNS
+ name-server 172.1.10.252
+ name-server 172.1.10.253
+ domain-name glowingearth.org
+object network EDM-MGMT
+ subnet 172.1.30.0 255.255.255.0
+ description Edmonton HO management network
+object network EDM-SERVER
+ subnet 172.1.10.0 255.255.255.0
+ description Server network for Edmonton HO
+object network OUTSIDE_RANGE
+ range 10.100.201.252 10.100.201.254
+object network GATEWAY
+ host 10.100.200.1
+object network permit_any
+ subnet 172.1.0.0 255.255.0.0
+object network DMVPN_HUB
+ host 172.1.8.2
+object network DMVPN_OUTSIDE
+ host 10.100.201.239
+ description DMVPN hub public IP
+object-group service allow_internet_tcp
+ description allow tcp ports for internet access
+ service-object tcp destination eq domain
+ service-object tcp destination eq www
+ service-object tcp destination eq https
+object-group service allow_internet_udp
+ description allow udp ports for allowing internet access
+ service-object udp destination eq domain
+access-list TO_CISCO_access_in_1 extended permit ip object EDM-MGMT any
+access-list TO_CISCO_access_in_1 extended permit ip any any
+access-list OUTSIDE_CONN_access_in extended permit ip any any
+access-list global_access extended permit ip any any inactive
+access-list OUTSIDE-CONN_access_in extended permit ip any any
 pager lines 24
+logging enable
+logging asdm informational
 mtu TO_CISCO 1500
 mtu TO_HP 1500
+mtu OUTSIDE-CONN 1500
 no failover
 icmp unreachable rate-limit 1 burst-size 1
+asdm image disk0:/asdm-741.bin
 no asdm history enable
 arp timeout 14400
 no arp permit-nonconnected
+!
+object network EDM-MGMT
+ nat (any,OUTSIDE-CONN) dynamic interface
+object network EDM-SERVER
+ nat (any,OUTSIDE-CONN) dynamic interface
+object network permit_any
+ nat (any,OUTSIDE-CONN) dynamic interface dns
+object network DMVPN_HUB
+ nat (any,any) static DMVPN_OUTSIDE net-to-net
+access-group TO_CISCO_access_in_1 in interface TO_CISCO
+access-group OUTSIDE-CONN_access_in in interface OUTSIDE-CONN
+access-group global_access global
+router ospf 1
+ router-id 1.1.1.1
+ network 172.1.8.0 255.255.255.252 area 0
+ log-adj-changes
+ redistribute static
+ default-information originate
+!
+route OUTSIDE-CONN 0.0.0.0 0.0.0.0 10.100.200.1 1
 timeout xlate 3:00:00
 timeout pat-xlate 0:00:30
 timeout conn 1:00:00 half-closed 0:10:00 udp 0:02:00 icmp 0:00:02
@@ -90,6 +156,8 @@ timeout sip-provisional-media 0:02:00 uauth 0:05:00 absolute
 timeout tcp-proxy-reassembly 0:01:00
 timeout floating-conn 0:00:00
 user-identity default-domain LOCAL
+http server enable
+http 172.1.30.0 255.255.255.0 TO_CISCO
 no snmp-server location
 no snmp-server contact
 service sw-reset-button
@@ -131,6 +199,7 @@ policy-map global_policy
   inspect sip
   inspect xdmcp
   inspect dns preset_dns_map
+  inspect icmp
 policy-map type inspect dns migrated_dns_map_1
  parameters
   message-length maximum client auto
@@ -150,5 +219,5 @@ call-home
   subscribe-to-alert-group inventory periodic monthly 3
   subscribe-to-alert-group configuration periodic monthly 3
   subscribe-to-alert-group telemetry periodic daily
-Cryptochecksum:dde0419da3e89e1b69bbc16debc41878
+Cryptochecksum:d63b0bb4936bfe3907e71575949e7453
 : end

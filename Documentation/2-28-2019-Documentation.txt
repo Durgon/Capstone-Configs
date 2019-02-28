@@ -1,0 +1,5 @@
+1) Configured ASA for internet access
+2) Configure the Cisco routers
+3)setup ospf at HO
+  -core devices in area 0
+  -L3 SWs using ospfv3 with address families at dist. & access
