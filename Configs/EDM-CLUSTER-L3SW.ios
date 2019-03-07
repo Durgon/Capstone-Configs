@@ -336,6 +336,8 @@ router ospf 1
  router-id 4.4.4.4
  network 172.1.8.8 0.0.0.3 area 0
  network 172.1.8.0 0.0.0.3 area 0
+ network 172.1.10.0 0.0.0.255 area 0
+ network 172.1.30.0 0.0.0.255 area 0
  passive-interface Vlan10
  passive-interface Vlan30
 
