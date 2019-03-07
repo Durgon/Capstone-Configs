@@ -220,14 +220,16 @@ interface GigabitEthernet0/0
  negotiation auto
 !
 interface GigabitEthernet1/0/1
- switchport access vlan 30
- switchport mode access
- spanning-tree portfast
+switchport trunk allowed vlan 10,30
+switchport mode trunk
+switchport nonegotiate
+spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/2
- switchport access vlan 30
- switchport mode access
- spanning-tree portfast
+switchport trunk allowed vlan 10,30
+switchport mode trunk
+switchport nonegotiate
+spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/3
  switchport trunk allowed vlan 10,30
@@ -236,9 +238,10 @@ interface GigabitEthernet1/0/3
  spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/4
- switchport access vlan 30
- switchport mode access
- spanning-tree portfast
+  switchport trunk allowed vlan 10,30
+  switchport mode trunk
+  switchport nonegotiate
+  spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/5
  switchport trunk allowed vlan 10,30
@@ -247,6 +250,10 @@ interface GigabitEthernet1/0/5
  spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/6
+switchport trunk allowed vlan 10,30
+switchport mode trunk
+switchport nonegotiate
+spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/7
  switchport access vlan 30
@@ -340,6 +347,7 @@ router ospf 2
  router-id 4.4.4.4
  redistribute ospfv3 1 subnets
  network 172.1.8.8 0.0.0.3 area 0
+
 !
 ip forward-protocol nd
 ip http server
