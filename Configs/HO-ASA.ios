@@ -52,29 +52,36 @@ interface GigabitEthernet1/6
  no ip address
 !
 interface GigabitEthernet1/7
- shutdown
  no nameif
  no security-level
  no ip address
 !
 interface GigabitEthernet1/8
- shutdown
  no nameif
  no security-level
  no ip address
 !
 interface Management1/1
+ description Inside management interface for ASA
  management-only
- shutdown
- no nameif
- no security-level
+ nameif MANAGEMENT
+ security-level 100
  no ip address
 !
 interface Redundant1
  description External connection to outside
  member-interface GigabitEthernet1/1
  member-interface GigabitEthernet1/2
- nameif OUTSIDE-CONN
+ nameif OUTSIDE-CONN-1
+ security-level 0
+ zone-member OUTSIDE
+ ip address 10.101.201.238 255.255.254.0
+!
+interface Redundant2
+ description Connection to Secondary ISP Gateway
+ member-interface GigabitEthernet1/7
+ member-interface GigabitEthernet1/8
+ nameif OUTSIDE-CONN-2
  security-level 0
  zone-member OUTSIDE
  ip address 10.100.201.238 255.255.254.0
@@ -91,17 +98,20 @@ object network EDM-MGMT
 object network EDM-SERVER
  subnet 172.1.10.0 255.255.255.0
  description Server network for Edmonton HO
-object network OUTSIDE_RANGE
+object network OUTSIDE_RANGE_1
  range 10.100.201.252 10.100.201.254
-object network GATEWAY
+object network GATEWAY-1
  host 10.100.200.1
 object network permit_any
  subnet 172.1.0.0 255.255.0.0
 object network DMVPN_HUB
  host 172.1.8.2
 object network DMVPN_OUTSIDE
- host 10.100.201.239
+ host 10.101.201.239
  description DMVPN hub public IP
+object network GATEWAY-2
+ host 10.101.200.1
+ description Secondary ISP Gateway
 object-group service allow_internet_tcp
  description allow tcp ports for internet access
  service-object tcp destination eq domain
@@ -120,8 +130,11 @@ logging enable
 logging asdm informational
 mtu TO_CISCO 1500
 mtu TO_HP 1500
-mtu OUTSIDE-CONN 1500
+mtu OUTSIDE-CONN-1 1500
+mtu OUTSIDE-CONN-2 1500
+mtu MANAGEMENT 1500
 no failover
+no monitor-interface service-module
 icmp unreachable rate-limit 1 burst-size 1
 asdm image disk0:/asdm-741.bin
 no asdm history enable
@@ -129,15 +142,15 @@ arp timeout 14400
 no arp permit-nonconnected
 !
 object network EDM-MGMT
- nat (any,OUTSIDE-CONN) dynamic interface
+ nat (any,OUTSIDE-CONN-1) dynamic interface dns
 object network EDM-SERVER
- nat (any,OUTSIDE-CONN) dynamic interface
+ nat (any,OUTSIDE-CONN-1) dynamic interface dns
 object network permit_any
- nat (any,OUTSIDE-CONN) dynamic interface dns
+ nat (any,OUTSIDE-CONN-1) dynamic interface dns
 object network DMVPN_HUB
- nat (any,any) static DMVPN_OUTSIDE net-to-net
+ nat (any,OUTSIDE-CONN-1) static DMVPN_OUTSIDE net-to-net
 access-group TO_CISCO_access_in_1 in interface TO_CISCO
-access-group OUTSIDE-CONN_access_in in interface OUTSIDE-CONN
+access-group OUTSIDE-CONN_access_in in interface OUTSIDE-CONN-1
 access-group global_access global
 router ospf 1
  router-id 1.1.1.1
@@ -146,7 +159,7 @@ router ospf 1
  redistribute static
  default-information originate
 !
-route OUTSIDE-CONN 0.0.0.0 0.0.0.0 10.100.200.1 1
+route OUTSIDE-CONN-1 0.0.0.0 0.0.0.0 10.101.200.1 1
 timeout xlate 3:00:00
 timeout pat-xlate 0:00:30
 timeout conn 1:00:00 half-closed 0:10:00 udp 0:02:00 icmp 0:00:02
@@ -172,6 +185,7 @@ console timeout 0
 threat-detection basic-threat
 threat-detection statistics access-list
 no threat-detection statistics tcp-intercept
+tftp-server TO_CISCO 172.1.30.4 /
 dynamic-access-policy-record DfltAccessPolicy
 !
 class-map inspection_default
@@ -219,5 +233,6 @@ call-home
   subscribe-to-alert-group inventory periodic monthly 3
   subscribe-to-alert-group configuration periodic monthly 3
   subscribe-to-alert-group telemetry periodic daily
-Cryptochecksum:d63b0bb4936bfe3907e71575949e7453
+hpm topN enable
+Cryptochecksum:a2cfd50e7427c82de59f493c097058ed
 : end

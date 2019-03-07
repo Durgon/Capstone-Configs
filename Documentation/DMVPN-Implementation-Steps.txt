@@ -17,12 +17,12 @@ crypto ipsec profile RootIT2019
 !6)configure EIGRP for the tunnel network
 !7)Configure tunnel0 on hub
 interface tunnel0
-  ip add $(address in 10.10.10.0/24 range)
-  tunnel source $(source interface)
+  ip add 10.10.10.1
+  tunnel source g0/1/0
   tunnel mode gre multipoint
   tunnel key 1
   tunnel protection ipsec profile RootIT2019
-  ip nhrp authentication RootIT2019-key
+  ip nhrp authentication Root2019
   ip nhrp map multicast dynamic
   ip nhrp network-id 1
   ip nhrp holdtime 300
@@ -30,16 +30,32 @@ interface tunnel0
   no ip next-hop-self EIGRP #
   no ip split-horizon EIGRP #
 !
-!8)Configure tunnel0 on spoke
+!8)Configure tunnel0 on spoke Dode-Ster
 interface tunnel0
-  ip add $(address in 10.10.10.0/24 range)
-  tunnel source $(source interface)
+  ip add 10.10.10.3
+  tunnel source g0/0
   tunnel mode gre multipoint
   tunnel key 1
   tunnel protection ipsec profile RootIT2019
-  ip nhrp authentication RootIT2019-key 
-  ip nhrp map $(hub router tunnel IP) $(hub router public IP)
-  ip nhrp map multicast $(hub router public ip)
+  ip nhrp authentication Root2019
+  ip nhrp map 10.10.10.1 10.101.201.239
+  ip nhrp map multicast 10.101.201.239
   ip nhrp network-id 1
-  ip nhrp nhs ($hub router tunnel IP)
+  ip nhrp nhs 10.10.10.1
   no ip redirects
+!
+!8)Configure tunnel0 on spoke South Inkai
+interface tunnel0
+  ip add 10.10.10.2 255.255.255.0
+  tunnel source g0/0
+  tunnel mode gre multipoint
+  tunnel key 1
+  tunnel protection ipsec profile RootIT2019
+  ip nhrp authentication Root2019
+  ip nhrp map 10.10.10.1 10.101.201.239
+  ip nhrp map multicast 10.101.201.239
+  ip nhrp network-id 1
+  ip nhrp nhs 10.10.10.1
+  no ip redirects
+!
+!9)Once sonicwall is configured for nat, set static nat to the G0/1/0 IP -> 10.100.201.242

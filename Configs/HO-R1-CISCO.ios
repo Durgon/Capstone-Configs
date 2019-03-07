@@ -1,8 +1,3 @@
-version 16.3
-service timestamps debug datetime msec
-service timestamps log datetime msec
-no platform punt-keepalive disable-kernel-core
-!
 hostname HO-R1-CISCO
 !
 boot-start-marker
@@ -22,8 +17,9 @@ no aaa new-model
 !
 !
 !
+ip name-server 172.1.10.252 172.1.10.253
 
-no ip domain lookup
+ip domain name glowingearth.org
 !
 !
 !
@@ -51,8 +47,6 @@ crypto pki trustpoint TP-self-signed-2401077705
  rsakeypair TP-self-signed-2401077705
 !
 !
-!
-!s
 license udi pid ISR4321/K9 sn FDO201701GU
 !
 diagnostic bootup level minimal
@@ -74,6 +68,18 @@ vlan internal allocation policy ascending
 !
 !
 !
+crypto isakmp policy 1
+ encr aes
+ authentication pre-share
+ group 5
+crypto isakmp key RootIT2019-key address 0.0.0.0
+!
+!
+crypto ipsec transform-set t-set esp-aes esp-sha-hmac
+ mode transport
+!
+crypto ipsec profile RootIT2019
+ set transform-set t-set
 !
 !
 !
@@ -88,6 +94,18 @@ vlan internal allocation policy ascending
 !
 !
 !
+interface Tunnel0
+ ip address 10.10.10.1 255.255.255.0
+ no ip redirects
+ no ip next-hop-self eigrp 1
+ no ip split-horizon eigrp 1
+ ip nhrp authentication Root2019
+ ip nhrp network-id 1
+ ip nhrp holdtime 300
+ tunnel source GigabitEthernet0/1/0
+ tunnel mode gre multipoint
+ tunnel key 1
+ tunnel protection ipsec profile RootIT2019
 !
 interface GigabitEthernet0/0/0
  ip address 172.1.8.9 255.255.255.252
@@ -116,6 +134,10 @@ interface GigabitEthernet0
 interface Vlan1
  no ip address
  shutdown
+!
+!
+router eigrp 1
+ network 10.10.10.0 0.0.0.255
 !
 router ospf 1
  router-id 2.2.2.2
@@ -150,6 +172,7 @@ control-plane
 !
 !
 line con 0
+ logging synchronous
  stopbits 1
 line aux 0
  stopbits 1
