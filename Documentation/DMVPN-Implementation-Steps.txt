@@ -1,0 +1,45 @@
+!1) Tunnel network range 10.10.10.0/24
+!2)Create isakmp policy 1 & key-pair
+crypto isakmp policy 1
+  authentication pre-share
+  encryption aes
+  hash sha
+  group 5
+  lifetime 86400
+crypto isakmp key RootIT2019-key add 0.0.0.0 0.0.0.0
+!3)Create transform set t-set
+crypto ipsec transform-set t-set esp-aes esp-sha-hmac
+  mode transport
+!4)create ipsec profile
+crypto ipsec profile RootIT2019
+  set transform-set t-set
+!5)Copy steps 2-4 and paste for each client
+!6)configure EIGRP for the tunnel network
+!7)Configure tunnel0 on hub
+interface tunnel0
+  ip add $(address in 10.10.10.0/24 range)
+  tunnel source $(source interface)
+  tunnel mode gre multipoint
+  tunnel key 1
+  tunnel protection ipsec profile RootIT2019
+  ip nhrp authentication RootIT2019-key
+  ip nhrp map multicast dynamic
+  ip nhrp network-id 1
+  ip nhrp holdtime 300
+  no ip redirects
+  no ip next-hop-self EIGRP #
+  no ip split-horizon EIGRP #
+!
+!8)Configure tunnel0 on spoke
+interface tunnel0
+  ip add $(address in 10.10.10.0/24 range)
+  tunnel source $(source interface)
+  tunnel mode gre multipoint
+  tunnel key 1
+  tunnel protection ipsec profile RootIT2019
+  ip nhrp authentication RootIT2019-key 
+  ip nhrp map $(hub router tunnel IP) $(hub router public IP)
+  ip nhrp map multicast $(hub router public ip)
+  ip nhrp network-id 1
+  ip nhrp nhs ($hub router tunnel IP)
+  no ip redirects
