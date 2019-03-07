@@ -1,0 +1,1 @@
+1)Configure secondary ISP network on ASA for G1/7 & g1/8
