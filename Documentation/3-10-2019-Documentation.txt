@@ -1,0 +1,7 @@
+1)Configured secondary layer 3 switch for HO: EDM-L3SW2
+2)Added glbp configurations to both layer 3 switches
+3)Added QoL configs to devices
+  -domain names
+  -name servers
+  -SSH access
+  -interface documentation
