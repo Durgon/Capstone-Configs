@@ -155,6 +155,7 @@ access-group global_access global
 router ospf 1
  router-id 1.1.1.1
  network 172.1.8.0 255.255.255.252 area 0
+ network 172.1.8.4 255.255.255.252 area 0
  log-adj-changes
  redistribute static
  default-information originate

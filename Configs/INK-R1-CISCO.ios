@@ -145,6 +145,7 @@ interface GigabitEthernet0/0/1
  negotiation auto
 !
 interface GigabitEthernet0/1/0
+ description Soon-to-be connection to SonicWALL
  ip address 10.101.201.242 255.255.254.0
  negotiation auto
 !

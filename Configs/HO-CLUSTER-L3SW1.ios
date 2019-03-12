@@ -172,6 +172,7 @@ policy-map system-cpp-policy
 !
 !
 interface Port-channel1
+  description Inter-switch link
   no switchport
   ip address 172.1.8.25 255.255.255.252
 !
