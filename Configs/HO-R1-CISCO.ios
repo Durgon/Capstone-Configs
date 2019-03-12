@@ -1,0 +1,187 @@
+hostname HO-R1-CISCO
+!
+boot-start-marker
+boot-end-marker
+!
+!
+vrf definition Mgmt-intf
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+!
+!
+no aaa new-model
+!
+!
+!
+ip name-server 172.1.10.252 172.1.10.253
+!
+ip domain name glowingearth.org
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+vtp domain cisco
+vtp mode transparent
+!
+!
+!
+multilink bundle-name authenticated
+!
+!
+!
+crypto pki trustpoint TP-self-signed-2401077705
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-2401077705
+ revocation-check none
+ rsakeypair TP-self-signed-2401077705
+!
+!
+license udi pid ISR4321/K9 sn FDO201701GU
+!
+diagnostic bootup level minimal
+spanning-tree extend system-id
+!
+!
+redundancy
+ mode none
+!
+!
+!
+!
+!
+vlan internal allocation policy ascending
+!
+!
+!
+!
+!
+!
+!
+crypto isakmp policy 1
+ encr aes
+ authentication pre-share
+ group 5
+crypto isakmp key RootIT2019-key address 0.0.0.0
+!
+!
+crypto ipsec transform-set t-set esp-aes esp-sha-hmac
+ mode transport
+!
+crypto ipsec profile RootIT2019
+ set transform-set t-set
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Tunnel0
+ ip address 10.10.10.1 255.255.255.0
+ no ip redirects
+ no ip next-hop-self eigrp 1
+ no ip split-horizon eigrp 1
+ ip nhrp authentication Root2019
+ ip nhrp network-id 1
+ ip nhrp holdtime 300
+ tunnel source GigabitEthernet0/1/0
+ tunnel mode gre multipoint
+ tunnel key 1
+ tunnel protection ipsec profile RootIT2019
+!
+interface GigabitEthernet0/0/0
+ ip address 172.1.8.9 255.255.255.252
+ negotiation auto
+!
+interface GigabitEthernet0/0/1
+ ip address 172.1.8.17 255.255.255.252
+ no shutdown
+ negotiation auto
+!
+interface GigabitEthernet0/1/0
+ description Connection to ASA Firewall
+ ip address 172.1.8.2 255.255.255.252
+ negotiation auto
+!
+interface GigabitEthernet0/1/1
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet0
+ vrf forwarding Mgmt-intf
+ no ip address
+ shutdown
+ negotiation auto
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+!
+router eigrp 1
+ network 10.10.10.0 0.0.0.255
+!
+router ospf 1
+ router-id 2.2.2.2
+ network 172.1.8.0 0.0.0.3 area 0
+ network 172.1.8.8 0.0.0.3 area 0
+!
+ip forward-protocol nd
+ip http server
+ip http authentication local
+ip http secure-server
+ip tftp source-interface GigabitEthernet0
+!
+!
+!
+!
+!
+!
+!
+ipv6 access-list preauth_v6
+ permit udp any any eq domain
+ permit tcp any any eq domain
+ permit icmp any any nd-ns
+ permit icmp any any nd-na
+ permit icmp any any router-solicitation
+ permit icmp any any router-advertisement
+ permit icmp any any redirect
+ permit udp any eq 547 any eq 546
+ permit udp any eq 546 any eq 547
+ deny ipv6 any any
+!
+control-plane
+!
+!
+line con 0
+ logging synchronous
+ stopbits 1
+line aux 0
+ stopbits 1
+line vty 0 4
+ login
+!
+!
+!
+!
+!
+!
+end

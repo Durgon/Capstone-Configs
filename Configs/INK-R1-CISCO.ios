@@ -1,0 +1,198 @@
+hostname INK-R1-CISCO
+!
+boot-start-marker
+boot-end-marker
+!
+!
+vrf definition Mgmt-intf
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+!
+!
+!
+!
+!
+!
+multilink bundle-name authenticated
+!
+!
+!
+crypto pki trustpoint TP-self-signed-2712767227
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-2712767227
+ revocation-check none
+ rsakeypair TP-self-signed-2712767227
+!
+!
+crypto pki certificate chain TP-self-signed-2712767227
+ certificate self-signed 01
+  30820330 30820218 A0030201 02020101 300D0609 2A864886 F70D0101 05050030
+  31312F30 2D060355 04031326 494F532D 53656C66 2D536967 6E65642D 43657274
+  69666963 6174652D 32373132 37363732 3237301E 170D3139 30333037 31393535
+  34325A17 0D323030 31303130 30303030 305A3031 312F302D 06035504 03132649
+  4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D32 37313237
+  36373232 37308201 22300D06 092A8648 86F70D01 01010500 0382010F 00308201
+  0A028201 0100A6C2 20F7EDCF 8C636F29 F7173DFA 580DB541 8A0AED5D 05A6BFF8
+  FD2CB10E 6D97A545 66C9CB7B 3C0377EE D3753E45 1E143E23 D2AC01EB 846F72B9
+  38ED1314 087EBBB2 013A5542 748C983F B372A25D F38002E2 37851CEC 11BE6B7E
+  1ABD0173 40571E8B 7B1F4F16 98C59A39 148E12AF AE475388 1CA1951F 7CAF8D38
+  3B8DA854 05C6E2C8 6DA0986B BBD9DC15 39B7F7A0 79AC16E6 C04676A3 517B59E5
+  3FB247C1 A47CE77E 93C2CCC9 E357D1E2 618838FC 70696E3F 1C880A85 F3D122EE
+  CB1D30AF 21ACFCA9 E3B8CCA8 345F1ECD 33BBACF2 408B58E5 01CC88EB 5FB5D916
+  3DE7EF6B 14CC6404 FB066771 C313E54B D92A7A6A ADA9E22A CEAE4E72 68D2A6FC
+  D46B30B1 6FB30203 010001A3 53305130 0F060355 1D130101 FF040530 030101FF
+  301F0603 551D2304 18301680 14861F02 1313AA82 F4DF8CED 7226D403 8DBF4E6B
+  D4301D06 03551D0E 04160414 861F0213 13AA82F4 DF8CED72 26D4038D BF4E6BD4
+  300D0609 2A864886 F70D0101 05050003 82010100 8D0412AC 5FA0CCB2 8B058CEC
+  2F5458D6 B9A84A10 9A16B964 B142C465 2BCDC819 2B4C3672 796B8732 22E7460D
+  97FE3B59 6732C67C 5D6663B9 AD800920 C6147229 EB9B5524 3288CAD0 A0E4C785
+  CCCC2AEC 2393760E E4EA6AAB 40C99B67 4CD5D972 A279796B B379DBA7 6E4207AF
+  696E1709 195EBE9D 260E2566 B80907C3 F5B84632 F59FADDE CB461FBF 55809AB2
+  13A20118 21254EED 4DF31380 5292A159 E2909194 CA8A528E 749CCC53 BBBE3DE7
+  080BC54E E3664EEA 19C8E14B EE051784 DF66F136 02DC746B 6A2F8ADE 11BB2C02
+  851987CF F59A2E23 A53DC795 5FC01C87 B3C3C39C 64D8A3B3 4E604065 05ECFC66
+  0AA29EB5 5E312853 88AE8983 F939DB95 74A3F71C
+        quit
+!
+!
+license udi pid ISR4321/K9 sn FDO20170L8F
+no license smart enable
+diagnostic bootup level minimal
+!
+spanning-tree extend system-id
+!
+!
+!
+!
+redundancy
+ mode none
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+crypto isakmp policy 1
+ encr aes
+ authentication pre-share
+ group 5
+crypto isakmp key RootIT2019-key address 0.0.0.0
+!
+!
+crypto ipsec transform-set t-set esp-aes esp-sha-hmac
+ mode transport
+!
+crypto ipsec profile RootIT2019
+ set transform-set t-set
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Tunnel0
+ ip address 10.10.10.2 255.255.255.0
+ no ip redirects
+ ip nhrp authentication Root2019
+ ip nhrp map 10.10.10.1 10.101.201.239
+ ip nhrp map multicast 10.101.201.239
+ ip nhrp network-id 1
+ ip nhrp nhs 10.10.10.1
+ tunnel source GigabitEthernet0/1/0
+ tunnel mode gre multipoint
+ tunnel key 1
+ tunnel protection ipsec profile RootIT2019
+!
+interface GigabitEthernet0/0/0
+ no ip address
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet0/0/1
+ no ip address
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet0/1/0
+ description Soon-to-be connection to SonicWALL
+ ip address 10.101.201.242 255.255.254.0
+ negotiation auto
+!
+interface GigabitEthernet0/1/1
+ negotiation auto
+!
+interface GigabitEthernet0
+ vrf forwarding Mgmt-intf
+ no ip address
+ shutdown
+ negotiation auto
+!
+!
+router eigrp 1
+ network 10.10.10.0 0.0.0.255
+!
+ip forward-protocol nd
+ip http server
+ip http authentication local
+ip http secure-server
+ip tftp source-interface GigabitEthernet0
+ip route 0.0.0.0 0.0.0.0 10.100.200.1
+!
+!
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ logging synchronous
+ transport input none
+ stopbits 1
+line aux 0
+ stopbits 1
+line vty 0 4
+ login
+!
+wsma agent exec
+!
+wsma agent config
+!
+wsma agent filesys
+!
+wsma agent notify
+!
+!
+end
