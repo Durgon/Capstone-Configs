@@ -1,4 +1,14 @@
-hostname EDM-CLUSTER-L3SW1
+Current configuration : 10518 bytes
+!
+! Last configuration change at 18:31:56 UTC Thu Mar 14 2019
+!
+version 16.3
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+!
+hostname HO-L3SW2
 !
 !
 vrf definition Mgmt-vrf
@@ -14,73 +24,66 @@ no aaa new-model
 switch 1 provision ws-c3650-24ps
 !
 !
-ip name-server 172.1.10.252 172.1.10.253
-!
-ip domain name glowingearth.org
 !
 !
 ip routing
 !
 !
 !
+ip name-server 172.1.10.252 172.1.10.253
 no ip domain lookup
-ip dhcp excluded-address 172.1.30.1 172.1.30.3
-ip dhcp excluded-address 172.1.30.10
-ip dhcp excluded-address 172.1.30.249 172.1.30.254
-!
-ip dhcp pool EDM-MGMT
- network 172.1.30.0 255.255.255.0
- default-router 172.1.30.1
- dns-server 172.1.10.252
-!
-!
-!
-ipv6 unicast-routing
+ip domain name glowingearth.org
 !
 !
 !
 !
 !
+!
+!
+!
+!
+!
+vtp mode transparent
 !
 key chain AuthenticatedGLBP
  key 1
   key-string RootIT2019_GLBP
 !
-crypto pki trustpoint TP-self-signed-2721755986
+crypto pki trustpoint TP-self-signed-1310226334
  enrollment selfsigned
- subject-name cn=IOS-Self-Signed-Certificate-2721755986
+ subject-name cn=IOS-Self-Signed-Certificate-1310226334
  revocation-check none
- rsakeypair TP-self-signed-2721755986
+ rsakeypair TP-self-signed-1310226334
 !
 !
-crypto pki certificate chain TP-self-signed-2721755986
+crypto pki certificate chain TP-self-signed-1310226334
  certificate self-signed 01
   30820330 30820218 A0030201 02020101 300D0609 2A864886 F70D0101 05050030
   31312F30 2D060355 04031326 494F532D 53656C66 2D536967 6E65642D 43657274
-  69666963 6174652D 32373231 37353539 3836301E 170D3139 30333037 31353537
-  33345A17 0D323030 31303130 30303030 305A3031 312F302D 06035504 03132649
-  4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D32 37323137
-  35353938 36308201 22300D06 092A8648 86F70D01 01010500 0382010F 00308201
-  0A028201 01009CEF 2D7C6E27 0492DB12 D7EF6CAB 070810F9 0DF75C54 F9AF2830
-  A0FB0E09 48F67D5B 405F12D2 BF8DD2C6 C0F18DDA A6D4E2F8 7D802E10 1507CCF3
-  80A0FE06 EF1D9440 F4E0CD52 0D1D8B71 DE845EE3 D4989797 87100C2D D82FF4EC
-  E05A127D 7B773D03 B66E9D77 B132F8C0 D14E3012 0C7A2BE5 9A099C86 C87A523D
-  EC661856 74660392 EF561916 AFD85817 90BBE798 0C64FF02 D33CD51C E7A62ABF
-  C0EC8405 86C06AA6 CEA114AB 1004D870 7A97A436 AA5E44D2 A1BF4A95 D68BB294
-  78E46D15 D33BB0AA D1712868 70F3969E E007DA1A D893D36F 58242532 75D7E618
-  900F4AAB B692F4C8 DD7D0830 4DA25320 AAAFAB89 6298207C EDFBF681 91D970DE
-  828C2075 FA5B0203 010001A3 53305130 0F060355 1D130101 FF040530 030101FF
-  301F0603 551D2304 18301680 14A61C06 BF0FAF6E 9ECC8958 5A1606AD 56400F7F
-  66301D06 03551D0E 04160414 A61C06BF 0FAF6E9E CC89585A 1606AD56 400F7F66
-  300D0609 2A864886 F70D0101 05050003 82010100 93351C73 715B0DF6 99229B09
-  E75FE878 FC4F0936 6903BF83 2A95F15C AE0D5414 D210FECE C2AC5C35 CB1A150C
-  AC1BD7AD 999C7276 995FF460 0A1FDEA0 0D0A3EEF 5118A285 3EE390A1 F33893F9
-  DAFC9FCD 5B8E6CA9 7B7702D3 5BFEAC8E 4A7DF658 B680DEE2 46CFDBFD 10AB995A
-  0B3E5A62 0E219D92 C0946EC9 DEB8DA22 CB250057 2897D1D5 5C4F08B0 3CBCA09B
-  986073B3 EE30BFD5 DE1DD8D8 81748DAD 254DA0C8 4F6AA523 621BD110 86ACE511
-  984AC15D 6E117C00 AB726176 D4C3B11D 40F6D7DE E669BE7A 8ACEF871 094AA11F
-  2ED742E4 143C6167 7DA9AB85 F6803A45 44227935 CFD95912 6A426B80 92A7DE4C
-  AF35BC42 B6DA07A1 80198E61 65D5B691 9A8D5672
+  69666963 6174652D 31333130 32323633 3334301E 170D3139 30333134 31353139
+  33365A17 0D323030 31303130 30303030 305A3031 312F302D 06035504 03132649
+  4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D31 33313032
+  32363333 34308201 22300D06 092A8648 86F70D01 01010500 0382010F 00308201
+  0A028201 0100C8E3 1B221DCC 18956E4C 078AF8AC 19938920 871AAB38 0AD67C02
+  54F3DA59 AFEFD58E 84D7B8EF B3FD7667 F7DE8F08 333454F4 2BBC0DDB E3D7CBA7
+  4378F65D A0704011 C5C10673 394FFC42 AA2441B4 CDD79420 FE21E7C4 3D5F5621
+  B2DCF650 55071B37 C2F58162 8CF3E93D FFF5EE57 4E8F36C8 B906105D 9982C496
+  28D2315C 32A3DA63 96E28623 E1EBC233 E4D52118 F20CFD22 72D090C9 AACD886E
+  2E863CFE 6A28EAD7 E49D35D9 6D56EBF0 A429AB5A 6B4F600E EBD3B926 649725BF
+  8108A1F6 D657F4E3 CEB277E1 424CBD69 E92F1009 73708327 97D00C16 987B8F67
+  1BE7B246 CB47D21F 198E6DC3 FC9C6C21 F35CDBF5 E257B2F6 6AF09726 6B4704E2
+  ED89585E 49510203 010001A3 53305130 0F060355 1D130101 FF040530 030101FF
+  301F0603 551D2304 18301680 1446A450 01C38EF2 CA9DDE1B D44A2E7E E8F6425E
+  F2301D06 03551D0E 04160414 46A45001 C38EF2CA 9DDE1BD4 4A2E7EE8 F6425EF2
+  300D0609 2A864886 F70D0101 05050003 82010100 67AC0B48 4A4BC198 8CBA4D6D
+  E52EAC59 8F6A437C B12F065E 0E5CBF72 5218A05F D36996C3 85023B00 2D88FFDA
+  E020CBDC 50544DC7 52C57409 011DF555 0BCD38B7 86F67D21 CA984A8E 8BD75647
+  E0BB956F 108075B6 75A56C30 CD7791A3 1E2079D6 A0284B7B 022A3D9C B494C099
+  6D57FE14 7BC46899 E3E61605 DEA8A4E5 C5073DE5 D8C8D86B A7185215 39BC4126
+  31CF1EAD 4DB8E1E0 31128881 127F4CDA 7192D15D 1FDAEF87 9C6147E6 C7766552
+  AC8C0B5E F206BB8F 1C0F3E0A 778BFCF7 9913B4D1 D222316E 73E72D28 F3125137
+  1D5BD10D 63D6CA1C E60A79FB DC3BED8B 0015557E 9DBE0B91 0E554E26 D2AC9E0C
+  A34E5CF7 9AEA9662 84BE1114 EB6C7283 613CE2A4
         quit
 !
 license boot level ipservicesk9
@@ -93,6 +96,12 @@ spanning-tree extend system-id
 redundancy
  mode sso
 !
+!
+vlan 10
+ name SERVER
+!
+vlan 30
+ name MANAGEMENT
 !
 !
 class-map match-any system-cpp-police-topology-control
@@ -171,9 +180,14 @@ policy-map system-cpp-policy
 !
 !
 !
+!
 interface Port-channel1
-  no switchport
-  ip address 172.1.8.25 255.255.255.252
+ no switchport
+ ip address 172.1.8.26 255.255.255.252
+!
+interface Port-channel3
+ switchport mode trunk
+ spanning-tree portfast trunk
 !
 interface GigabitEthernet0/0
  vrf forwarding Mgmt-vrf
@@ -181,45 +195,38 @@ interface GigabitEthernet0/0
  negotiation auto
 !
 interface GigabitEthernet1/0/1
- switchport trunk allowed vlan 10,30
- switchport mode trunk
- switchport nonegotiate
- spanning-tree portfast trunk
+ switchport access vlan 10
+ switchport mode access
+ spanning-tree portfast
 !
 interface GigabitEthernet1/0/2
- switchport trunk allowed vlan 10,30
- switchport mode trunk
- switchport nonegotiate
- spanning-tree portfast trunk
+ switchport access vlan 10
+ switchport mode access
+ spanning-tree portfast
 !
 interface GigabitEthernet1/0/3
- switchport trunk allowed vlan 10,30
- switchport mode trunk
- switchport nonegotiate
- spanning-tree portfast trunk
+ switchport access vlan 10
+ switchport mode access
+ spanning-tree portfast
 !
 interface GigabitEthernet1/0/4
- switchport trunk allowed vlan 10,30
- switchport mode trunk
- switchport nonegotiate
- spanning-tree portfast trunk
+ switchport access vlan 10
+ switchport mode access
+ spanning-tree portfast
 !
 interface GigabitEthernet1/0/5
- switchport trunk allowed vlan 10,30
- switchport mode trunk
- switchport nonegotiate
- spanning-tree portfast trunk
+ switchport access vlan 30
+ switchport mode access
+ spanning-tree portfast
 !
 interface GigabitEthernet1/0/6
- switchport trunk allowed vlan 10,30
- switchport mode trunk
- switchport nonegotiate
- spanning-tree portfast trunk
+ switchport access vlan 30
+ switchport mode access
+ spanning-tree portfast
 !
 interface GigabitEthernet1/0/7
  switchport access vlan 30
  switchport mode access
- switchport nonegotiate
  spanning-tree portfast
 !
 interface GigabitEthernet1/0/8
@@ -228,46 +235,40 @@ interface GigabitEthernet1/0/8
  spanning-tree portfast
 !
 interface GigabitEthernet1/0/9
- switchport access vlan 30
- switchport mode access
- spanning-tree portfast
 !
 interface GigabitEthernet1/0/10
- switchport access vlan 30
- switchport mode access
- spanning-tree portfast
 !
 interface GigabitEthernet1/0/11
- switchport access vlan 30
- switchport mode access
- spanning-tree portfast
 !
 interface GigabitEthernet1/0/12
- switchport access vlan 30
- switchport mode access
- spanning-tree portfast
 !
 interface GigabitEthernet1/0/13
  no switchport
- ip address 172.1.8.10 255.255.255.252
+ ip address 172.1.8.14 255.255.255.252
 !
 interface GigabitEthernet1/0/14
-  no switchport
-  ip address 172.1.8.22 255.255.255.252
+ no switchport
+ ip address 172.1.8.18 255.255.255.252
 !
 interface GigabitEthernet1/0/15
-  no switchport
-  no ip address
-  channel-group 1 mode
+ no switchport
+ no ip address
+ channel-group 1 mode on
 !
 interface GigabitEthernet1/0/16
-  no switchport
-  no ip address
-  channel-group 1 mode
+ no switchport
+ no ip address
+ channel-group 1 mode on
 !
 interface GigabitEthernet1/0/17
+ switchport mode trunk
+ channel-group 3 mode on
+ spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/18
+ switchport mode trunk
+ channel-group 3 mode on
+ spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/19
 !
@@ -294,32 +295,27 @@ interface Vlan1
  shutdown
 !
 interface Vlan10
- ip address 172.1.10.251 255.255.255.0
- ip helper-address 172.1.10.253
- glbp 10 name SERVERS
+ ip address 172.1.10.231 255.255.255.0
  glbp 10 ip 172.1.10.1
+ glbp 10 timers msec 500 2
+ glbp 10 priority 254
+ glbp 10 preempt
  glbp 10 authentication md5 key-chain AuthenticatedGLBP
- glbp 10 timers msec 500 msec 2000
- glbp 10 priority 100
- glbp 10 load-balancing round-robin
- ipv6 enable
+ glbp 10 name SERVERS
 !
 interface Vlan30
- ip address 172.1.30.251 255.255.255.0
- ip helper-address 172.1.10.253
- glbp 10 name MANAGEMENT
+ ip address 172.1.30.250 255.255.255.0
  glbp 10 ip 172.1.30.1
+ glbp 10 timers msec 500 2
  glbp 10 authentication md5 key-chain AuthenticatedGLBP
- glbp 10 timers msec 500 msec 2000
- glbp 10 priority 100
- glbp 10 load-balancing round-robin
- ipv6 enable
+ glbp 10 name MANAGEMENT
 !
 router ospf 1
- router-id 4.4.4.4
+ router-id 5.5.5.5
+ redistribute connected subnets
  passive-interface Vlan10
  passive-interface Vlan30
- network 172.1.8.8 0.0.0.3 area 0
+ network 172.1.8.16 0.0.0.3 area 0
  network 172.1.8.24 0.0.0.3 area 0
  network 172.1.10.0 0.0.0.255 area 0
  network 172.1.30.0 0.0.0.255 area 0
@@ -328,9 +324,51 @@ ip forward-protocol nd
 ip http server
 ip http authentication local
 ip http secure-server
-ip ssh version 2
 !
 !
+ip access-list extended AutoQos-4.0-wlan-Acl-Bulk-Data
+ permit tcp any any eq 22
+ permit tcp any any eq 465
+ permit tcp any any eq 143
+ permit tcp any any eq 993
+ permit tcp any any eq 995
+ permit tcp any any eq 1914
+ permit tcp any any eq ftp
+ permit tcp any any eq ftp-data
+ permit tcp any any eq smtp
+ permit tcp any any eq pop3
+ip access-list extended AutoQos-4.0-wlan-Acl-MultiEnhanced-Conf
+ permit udp any any range 16384 32767
+ permit tcp any any range 50000 59999
+ip access-list extended AutoQos-4.0-wlan-Acl-Scavanger
+ permit tcp any any range 2300 2400
+ permit udp any any range 2300 2400
+ permit tcp any any range 6881 6999
+ permit tcp any any range 28800 29100
+ permit tcp any any eq 1214
+ permit udp any any eq 1214
+ permit tcp any any eq 3689
+ permit udp any any eq 3689
+ permit tcp any any eq 11999
+ip access-list extended AutoQos-4.0-wlan-Acl-Signaling
+ permit tcp any any range 2000 2002
+ permit tcp any any range 5060 5061
+ permit udp any any range 5060 5061
+ip access-list extended AutoQos-4.0-wlan-Acl-Transactional-Data
+ permit tcp any any eq 443
+ permit tcp any any eq 1521
+ permit udp any any eq 1521
+ permit tcp any any eq 1526
+ permit udp any any eq 1526
+ permit tcp any any eq 1575
+ permit udp any any eq 1575
+ permit tcp any any eq 1630
+ permit udp any any eq 1630
+ permit tcp any any eq 1527
+ permit tcp any any eq 6200
+ permit tcp any any eq 3389
+ permit tcp any any eq 5985
+ permit tcp any any eq 8080
 !
 !
 !
@@ -342,7 +380,6 @@ control-plane
 no vstack
 !
 line con 0
- logging synchronous
  stopbits 1
 line aux 0
  stopbits 1
