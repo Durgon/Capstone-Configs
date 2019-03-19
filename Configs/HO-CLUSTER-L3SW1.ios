@@ -182,77 +182,91 @@ interface GigabitEthernet0/0
  negotiation auto
 !
 interface GigabitEthernet1/0/1
+ description ESXI Trunk link
  switchport trunk allowed vlan 10,30
  switchport mode trunk
  switchport nonegotiate
  spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/2
+ description ESXI Trunk link
  switchport trunk allowed vlan 10,30
  switchport mode trunk
  switchport nonegotiate
  spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/3
+ description ESXI Trunk link
  switchport trunk allowed vlan 10,30
  switchport mode trunk
  switchport nonegotiate
  spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/4
+ description ESXI Trunk link
  switchport trunk allowed vlan 10,30
  switchport mode trunk
  switchport nonegotiate
  spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/5
+ description ESXI Trunk link
  switchport trunk allowed vlan 10,30
  switchport mode trunk
  switchport nonegotiate
  spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/6
+ description ESXI Trunk link
  switchport trunk allowed vlan 10,30
  switchport mode trunk
  switchport nonegotiate
  spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/7
+ description Management port
  switchport access vlan 30
  switchport mode access
  switchport nonegotiate
  spanning-tree portfast
 !
 interface GigabitEthernet1/0/8
+ description Management port
  switchport access vlan 30
  switchport mode access
  spanning-tree portfast
 !
 interface GigabitEthernet1/0/9
+ description Management port
  switchport access vlan 30
  switchport mode access
  spanning-tree portfast
 !
 interface GigabitEthernet1/0/10
+ description Management port
  switchport access vlan 30
  switchport mode access
  spanning-tree portfast
 !
 interface GigabitEthernet1/0/11
+ description Management port
  switchport access vlan 30
  switchport mode access
  spanning-tree portfast
 !
 interface GigabitEthernet1/0/12
+ description Management port
  switchport access vlan 30
  switchport mode access
  spanning-tree portfast
 !
 interface GigabitEthernet1/0/13
+ desciption Connection to HO-R1-CISCO
  no switchport
  ip address 172.1.8.10 255.255.255.252
 !
 interface GigabitEthernet1/0/14
+  desciption Connection to HO-R2-HP
   no switchport
   ip address 172.1.8.22 255.255.255.252
 !
