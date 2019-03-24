@@ -1,6 +1,7 @@
 1) Configured SonicWALL
-  -set default LAN interface (X0) IP: 172.4.8.1 /23
+  -set default LAN connection (X0) IP: 172.4.8.1/23
+  -set secondary LAN connection (X3) IP: 172.4.8.5/23
   -set primary WAN connection (X1 & X2) IP: 10.101.201.240/23
   -set secondary WAN Connection (X6 & X7) IP: 10.100.201.240/23
-  -set Management interface IP: 172.1.30.X/24
+  -set Management interface IP: 172.4.30.254/24
   -User:admin/Pass:RootIT2019$

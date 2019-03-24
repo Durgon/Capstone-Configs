@@ -1,3 +1,12 @@
+Current configuration : 7036 bytes
+!
+! Last configuration change at 00:19:28 UTC Sun Mar 24 2019
+!
+version 16.3
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+!
 hostname HO-R1-CISCO
 !
 boot-start-marker
@@ -18,7 +27,7 @@ no aaa new-model
 !
 !
 ip name-server 172.1.10.252 172.1.10.253
-!
+
 ip domain name glowingearth.org
 !
 !
@@ -47,6 +56,37 @@ crypto pki trustpoint TP-self-signed-2401077705
  rsakeypair TP-self-signed-2401077705
 !
 !
+crypto pki certificate chain TP-self-signed-2401077705
+ certificate self-signed 01
+  30820330 30820218 A0030201 02020101 300D0609 2A864886 F70D0101 05050030
+  31312F30 2D060355 04031326 494F532D 53656C66 2D536967 6E65642D 43657274
+  69666963 6174652D 32343031 30373737 3035301E 170D3139 30333233 31383232
+  35355A17 0D323030 31303130 30303030 305A3031 312F302D 06035504 03132649
+  4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D32 34303130
+  37373730 35308201 22300D06 092A8648 86F70D01 01010500 0382010F 00308201
+  0A028201 01009A99 4A2C7098 12747048 1B8721D0 CE0E5D5B FDE90B60 5E13D9C7
+  5503F73D 24005792 CFFC8CF2 53C1CAD9 7DB072D2 0AE41FA8 0BC4A820 46CD1365
+  5F1F4C75 8FD698A8 AA776299 D28EC2B4 1BBDEA09 EA4FD438 4F4F2CA8 FDB74CF4
+  E954176E B8B6CF18 AB0D4AF3 62C509AB 59855602 ED769BBC 7C7DD979 D6D8AC04
+  72933179 BCB50AEB D7F1E2B8 69C08E4F ED7D1D81 69BDC77E 41134230 1FF856D0
+  A8D7558F 47FFA0E2 31475E41 BC2ECC84 5071F397 6C681223 A7FC5A11 C4C1D5F4
+  867E6E04 5C555563 63C3A7A3 7A8B2413 B60E4D1A 426C3617 5C0B9834 C6E4722A
+  6C607454 88C5F1BB 052EF1BD 192C7C37 1B26A452 33E17BC6 B172C4EA 643CBD06
+  ABD50C2A 193F0203 010001A3 53305130 0F060355 1D130101 FF040530 030101FF
+  301F0603 551D2304 18301680 1494F20F 38B75746 551C17F2 786C76E0 7F96C829
+  ED301D06 03551D0E 04160414 94F20F38 B7574655 1C17F278 6C76E07F 96C829ED
+  300D0609 2A864886 F70D0101 05050003 82010100 200AA9A8 75848393 0DF2294E
+  05DD92C0 C68A2C34 55DC02D1 364F518A FA67C50C 37FCE0D3 08A47E8E 595DC431
+  CA68A837 650F20A2 AD7D8479 832B736C A44A186C 56A4DC3A C2073543 65E5153A
+  EB7359F8 3B7B1EAB CF8774E2 C3ED3AB4 9E7C040D 196226C1 EF441DAF 63F9CB93
+  A5947B43 F61B48DF 63B7C0B3 D0002F0B 2E7F00B9 9995A398 72FFE752 28D2D970
+  24F9363D 875DFD2B 2C53FA2B BAB25964 80C4A48A 22EE7B2F 1DE6578D 712D81DC
+  AC3C9C68 F1AAF941 4278846E 08EAC240 11140743 9759EC0D 3DE6FB66 AC66E279
+  79A073BA 18C28AA9 936849B5 C0747EBC 4A1329DC 485F304A 013AD0CA 2DB160AF
+  8DCC0C02 526683D0 3E002997 CD60F46A 365C1979
+        quit
+
+
 license udi pid ISR4321/K9 sn FDO201701GU
 !
 diagnostic bootup level minimal
@@ -97,11 +137,13 @@ crypto ipsec profile RootIT2019
 interface Tunnel0
  ip address 10.10.10.1 255.255.255.0
  no ip redirects
+ ip mtu 1400
  no ip next-hop-self eigrp 1
  no ip split-horizon eigrp 1
  ip nhrp authentication Root2019
  ip nhrp network-id 1
  ip nhrp holdtime 300
+ ip tcp adjust-mss 1360
  tunnel source GigabitEthernet0/1/0
  tunnel mode gre multipoint
  tunnel key 1
@@ -110,20 +152,19 @@ interface Tunnel0
 interface GigabitEthernet0/0/0
  description Connection to HO-CLUSTER-L3SW1
  ip address 172.1.8.9 255.255.255.252
- no shutdown
+ negotiation auto
 !
 interface GigabitEthernet0/0/1
  ip address 172.1.8.17 255.255.255.252
- no shutdown
- !
+ negotiation auto
+!
 interface GigabitEthernet0/1/0
  description Connection to ASA Firewall
  ip address 172.1.8.2 255.255.255.252
- no shutdown
+ negotiation auto
 !
 interface GigabitEthernet0/1/1
  no ip address
- no shutdown
  negotiation auto
 !
 interface GigabitEthernet0
@@ -138,10 +179,16 @@ interface Vlan1
 !
 !
 router eigrp 1
+ default-metric 10000 100 255 1 1500
  network 10.10.10.0 0.0.0.255
+ redistribute ospf 1
 !
 router ospf 1
  router-id 2.2.2.2
+ area 0 range 172.1.0.0 255.255.0.0
+ area 4 range 172.4.0.0 255.255.0.0
+ summary-address 172.1.0.0 255.255.0.0
+ redistribute eigrp 1 metric 100 subnets
  network 172.1.8.0 0.0.0.3 area 0
  network 172.1.8.8 0.0.0.3 area 0
  network 172.1.8.16 0.0.0.3 area 0
@@ -172,9 +219,50 @@ ipv6 access-list preauth_v6
 !
 control-plane
 !
+banner login ^C
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@',.,,,,'@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@,,,,,,,,,,,,@@@@@@@@@@@@@
+@@@@@@@@@@@@,:,,,,,,,,,,,,@@@@@@@@@@@@
+@@@@@@@@@@@@;,,,,,,,,,,,,,@@@@@@@@@@@@
+@@@@@@@@@@@@@,,,,,,,,,,,,@@@@@@@@@@@@@
+@@@@@@@@@@@@@#,,,,,,,,,,,@@@@@@@@@@@@@
+@@@@@@@@@@@@@@.,,,,,,,,,@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@,,,,,,,,;@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@:,,,,,,,@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@,,,,,,'@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@'.;'.,@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@##';+#@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@##+;:`.#@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@+'';',;'@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@'+'''+''@@@@@@@@@@@@@@@
+@@@@###########''';+';'@##########@@@@
+@@@@.,,,,,,,,,;'+++''';@,,,,,,,,,,@@@@
+@@@@,,,,,,,,,,,#+++'+';@,,,,,,,,,,@@@@
+@@@@,,,,,,,,,,,@#++'''@,,,,,,,,,,,@@@@
+@@@@;,,,,,,,,,,,#@+'#@,,,,,,,,,,,,@@@@
+@@@@@,,,,,,,,,,,@@@@@@,,,,,,,,,,,.@@@@
+@@@@@,,,,,,,,,,;@@@@@@@,,,,,,,,,,'@@@@
+@@@@@;,,,,,,,,,@@@@@@@@+,,,,,,,,,@@@@@
+@@@@@@,,,,,,,,#@@@@@@@@@.,,,,,,,;@@@@@
+@@@@@@+,,,,,,,@@@@@@@@@@@,,,,,,,@@@@@@
+@@@@@@@,,,,,,@@@@@@@@@@@@;,,,,,@@@@@@@
+@@@@@@@@,,,,'@@@@@@@@@@@@@,,,,@@@@@@@@
+@@@@@@@@@',.@@@@@@@@@@@@@@@,.@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@'@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-----------------------------------------------------------------------------------------------------------------------------
+YOU ARE CONNECTING TOO $(hostname)@$(domain) ON LINE $(line)($(line-desc))
+THIS IS A SECURE SYSTEM. ACCESS RESTRICTED TO AUTHORIZED USERS ONLY. UNAUTHORIZED USERS ARE FORBIDDEN AND WILL BE PROSECUTED.
+All configurations are property Glowing Earth corp.
+-----------------------------------------------------------------------------------------------------------------------------
+^C
 !
 line con 0
+ password cisco
  logging synchronous
+ login
  stopbits 1
 line aux 0
  stopbits 1
