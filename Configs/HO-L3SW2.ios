@@ -312,7 +312,6 @@ interface Vlan30
 !
 router ospf 1
  router-id 5.5.5.5
- redistribute connected subnets
  passive-interface Vlan10
  passive-interface Vlan30
  network 172.1.8.16 0.0.0.3 area 0

@@ -95,10 +95,18 @@ interface FastEthernet0/12
 interface FastEthernet0/13
  description Connection to INK-R1-CISCO
  no switchport
+<<<<<<< HEAD
  ip address 172.4.8.10 255.255.255.252
  spanning-tree portfast
 !
 interface FastEthernet0/14
+=======
+ ip address 172.4.8.14 255.255.255.252
+!
+interface FastEthernet0/14
+ no switchport
+ ip address 172.4.8.18 255.255.255.252
+>>>>>>> 7268587d28698e48a75f24bab14ae36f1cb056f0
 !
 interface FastEthernet0/15
 !
@@ -126,9 +134,13 @@ interface GigabitEthernet0/2
 !
 interface Vlan1
  no ip address
+<<<<<<< HEAD
 !
 interface Vlan10
  ip address 172.4.10.1 255.255.255.0
+=======
+ shutdown
+>>>>>>> 7268587d28698e48a75f24bab14ae36f1cb056f0
 !
 interface Vlan30
  ip address 172.4.30.1 255.255.255.0
@@ -136,11 +148,17 @@ interface Vlan30
 router ospf 1
  router-id 4.4.4.4
  log-adjacency-changes
+<<<<<<< HEAD
  passive-interface Vlan10
  passive-interface Vlan30
  network 172.4.8.8 0.0.0.3 area 4
  network 172.4.10.0 0.0.0.255 area 4
  network 172.4.30.0 0.0.0.255 area 4
+=======
+ passive-interface Vlan30
+ network 172.4.8.12 0.0.0.3 area 0
+ network 172.4.8.16 0.0.0.3 area 0
+>>>>>>> 7268587d28698e48a75f24bab14ae36f1cb056f0
 !
 ip classless
 ip http server

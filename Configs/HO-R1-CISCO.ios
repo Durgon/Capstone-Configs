@@ -1,3 +1,12 @@
+Current configuration : 7036 bytes
+!
+! Last configuration change at 00:19:28 UTC Sun Mar 24 2019
+!
+version 16.3
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+!
 hostname HO-R1-CISCO
 !
 boot-start-marker
@@ -128,11 +137,13 @@ crypto ipsec profile RootIT2019
 interface Tunnel0
  ip address 10.10.10.1 255.255.255.0
  no ip redirects
+ ip mtu 1400
  no ip next-hop-self eigrp 1
  no ip split-horizon eigrp 1
  ip nhrp authentication Root2019
  ip nhrp network-id 1
  ip nhrp holdtime 300
+ ip tcp adjust-mss 1360
  tunnel source GigabitEthernet0/1/0
  tunnel mode gre multipoint
  tunnel key 1
@@ -207,9 +218,50 @@ ipv6 access-list preauth_v6
 !
 control-plane
 !
+banner login ^C
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@',.,,,,'@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@,,,,,,,,,,,,@@@@@@@@@@@@@
+@@@@@@@@@@@@,:,,,,,,,,,,,,@@@@@@@@@@@@
+@@@@@@@@@@@@;,,,,,,,,,,,,,@@@@@@@@@@@@
+@@@@@@@@@@@@@,,,,,,,,,,,,@@@@@@@@@@@@@
+@@@@@@@@@@@@@#,,,,,,,,,,,@@@@@@@@@@@@@
+@@@@@@@@@@@@@@.,,,,,,,,,@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@,,,,,,,,;@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@:,,,,,,,@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@,,,,,,'@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@'.;'.,@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@##';+#@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@##+;:`.#@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@+'';',;'@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@'+'''+''@@@@@@@@@@@@@@@
+@@@@###########''';+';'@##########@@@@
+@@@@.,,,,,,,,,;'+++''';@,,,,,,,,,,@@@@
+@@@@,,,,,,,,,,,#+++'+';@,,,,,,,,,,@@@@
+@@@@,,,,,,,,,,,@#++'''@,,,,,,,,,,,@@@@
+@@@@;,,,,,,,,,,,#@+'#@,,,,,,,,,,,,@@@@
+@@@@@,,,,,,,,,,,@@@@@@,,,,,,,,,,,.@@@@
+@@@@@,,,,,,,,,,;@@@@@@@,,,,,,,,,,'@@@@
+@@@@@;,,,,,,,,,@@@@@@@@+,,,,,,,,,@@@@@
+@@@@@@,,,,,,,,#@@@@@@@@@.,,,,,,,;@@@@@
+@@@@@@+,,,,,,,@@@@@@@@@@@,,,,,,,@@@@@@
+@@@@@@@,,,,,,@@@@@@@@@@@@;,,,,,@@@@@@@
+@@@@@@@@,,,,'@@@@@@@@@@@@@,,,,@@@@@@@@
+@@@@@@@@@',.@@@@@@@@@@@@@@@,.@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@'@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-----------------------------------------------------------------------------------------------------------------------------
+YOU ARE CONNECTING TOO $(hostname)@$(domain) ON LINE $(line)($(line-desc))
+THIS IS A SECURE SYSTEM. ACCESS RESTRICTED TO AUTHORIZED USERS ONLY. UNAUTHORIZED USERS ARE FORBIDDEN AND WILL BE PROSECUTED.
+All configurations are property Glowing Earth corp.
+-----------------------------------------------------------------------------------------------------------------------------
+^C
 !
 line con 0
+ password cisco
  logging synchronous
+ login
  stopbits 1
 line aux 0
  stopbits 1

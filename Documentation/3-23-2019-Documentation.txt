@@ -1,0 +1,6 @@
+1)Configured INK-L3SW1
+  -OSPF
+  -VLANs
+2)Configured summary addresses for INK & HO sites
+3)Tweaked MTU & tcp mss size for optimized dmvpn communication
+4)Added login banners
