@@ -1,3 +1,13 @@
+Current configuration : 12505 bytes
+!
+! Last configuration change at 22:01:19 UTC Thu Mar 28 2019
+!
+version 16.3
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+!
 hostname HO-CLUSTER-L3SW1
 !
 !
@@ -14,19 +24,15 @@ no aaa new-model
 switch 1 provision ws-c3650-24ps
 !
 !
-ip name-server 172.1.10.252 172.1.10.253
-!
-ip domain name glowingearth.org
 !
 !
 ip routing
 !
 !
 !
+ip name-server 172.1.10.252 172.1.10.253
 no ip domain lookup
-ip dhcp excluded-address 172.1.30.1 172.1.30.3
-ip dhcp excluded-address 172.1.30.10
-ip dhcp excluded-address 172.1.30.249 172.1.30.254
+ip domain name glowingearth.org
 !
 !
 !
@@ -37,9 +43,15 @@ ipv6 unicast-routing
 !
 !
 !
+!
+!
 key chain AuthenticatedGLBP
  key 1
   key-string RootIT2019_GLBP
+key chain AuthenticatedOSPF
+ key 1
+  key-string RootIT2019_OSPF
+   cryptographic-algorithm md5
 !
 crypto pki trustpoint TP-self-signed-2721755986
  enrollment selfsigned
@@ -48,42 +60,25 @@ crypto pki trustpoint TP-self-signed-2721755986
  rsakeypair TP-self-signed-2721755986
 !
 !
-crypto pki certificate chain TP-self-signed-2721755986
- certificate self-signed 01
-  30820330 30820218 A0030201 02020101 300D0609 2A864886 F70D0101 05050030
-  31312F30 2D060355 04031326 494F532D 53656C66 2D536967 6E65642D 43657274
-  69666963 6174652D 32373231 37353539 3836301E 170D3139 30333037 31353537
-  33345A17 0D323030 31303130 30303030 305A3031 312F302D 06035504 03132649
-  4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D32 37323137
-  35353938 36308201 22300D06 092A8648 86F70D01 01010500 0382010F 00308201
-  0A028201 01009CEF 2D7C6E27 0492DB12 D7EF6CAB 070810F9 0DF75C54 F9AF2830
-  A0FB0E09 48F67D5B 405F12D2 BF8DD2C6 C0F18DDA A6D4E2F8 7D802E10 1507CCF3
-  80A0FE06 EF1D9440 F4E0CD52 0D1D8B71 DE845EE3 D4989797 87100C2D D82FF4EC
-  E05A127D 7B773D03 B66E9D77 B132F8C0 D14E3012 0C7A2BE5 9A099C86 C87A523D
-  EC661856 74660392 EF561916 AFD85817 90BBE798 0C64FF02 D33CD51C E7A62ABF
-  C0EC8405 86C06AA6 CEA114AB 1004D870 7A97A436 AA5E44D2 A1BF4A95 D68BB294
-  78E46D15 D33BB0AA D1712868 70F3969E E007DA1A D893D36F 58242532 75D7E618
-  900F4AAB B692F4C8 DD7D0830 4DA25320 AAAFAB89 6298207C EDFBF681 91D970DE
-  828C2075 FA5B0203 010001A3 53305130 0F060355 1D130101 FF040530 030101FF
-  301F0603 551D2304 18301680 14A61C06 BF0FAF6E 9ECC8958 5A1606AD 56400F7F
-  66301D06 03551D0E 04160414 A61C06BF 0FAF6E9E CC89585A 1606AD56 400F7F66
-  300D0609 2A864886 F70D0101 05050003 82010100 93351C73 715B0DF6 99229B09
-  E75FE878 FC4F0936 6903BF83 2A95F15C AE0D5414 D210FECE C2AC5C35 CB1A150C
-  AC1BD7AD 999C7276 995FF460 0A1FDEA0 0D0A3EEF 5118A285 3EE390A1 F33893F9
-  DAFC9FCD 5B8E6CA9 7B7702D3 5BFEAC8E 4A7DF658 B680DEE2 46CFDBFD 10AB995A
-  0B3E5A62 0E219D92 C0946EC9 DEB8DA22 CB250057 2897D1D5 5C4F08B0 3CBCA09B
-  986073B3 EE30BFD5 DE1DD8D8 81748DAD 254DA0C8 4F6AA523 621BD110 86ACE511
-  984AC15D 6E117C00 AB726176 D4C3B11D 40F6D7DE E669BE7A 8ACEF871 094AA11F
-  2ED742E4 143C6167 7DA9AB85 F6803A45 44227935 CFD95912 6A426B80 92A7DE4C
-  AF35BC42 B6DA07A1 80198E61 65D5B691 9A8D5672
-        quit
 !
 license boot level ipservicesk9
 diagnostic bootup level minimal
-spanning-tree mode rapid-pvst
+!
+spanning-tree mode mst
 spanning-tree extend system-id
 !
+spanning-tree mst configuration
+ name HeadOffice
+ revision 3
+ instance 1 vlan 10, 30
+ instance 2 vlan 14, 34
+ instance 7 vlan 17, 37
 !
+spanning-tree mst 1 priority 24576
+spanning-tree mst 2,7 priority 28672
+!
+!
+username cisco privilege 15 one-time password 0 FDO2005Q18M
 !
 redundancy
  mode sso
@@ -166,10 +161,24 @@ policy-map system-cpp-policy
 !
 !
 !
+!
 interface Port-channel1
-  description Inter-switch link
-  no switchport
-  ip address 172.1.8.25 255.255.255.252
+ description Inter-switch link
+ no switchport
+ ip address 172.1.8.25 255.255.255.252
+!
+interface Port-channel3
+ description Connection to HO-L2SW1 (G1/0/17-18)
+ switchport trunk allowed vlan 10,30
+ switchport mode trunk
+!
+interface Port-channel4
+ switchport trunk allowed vlan 14,34
+ switchport mode trunk
+!
+interface Port-channel7
+ switchport trunk allowed vlan 17,37
+ switchport mode trunk
 !
 interface GigabitEthernet0/0
  vrf forwarding Mgmt-vrf
@@ -256,36 +265,54 @@ interface GigabitEthernet1/0/12
  spanning-tree portfast
 !
 interface GigabitEthernet1/0/13
- desciption Connection to HO-R1-CISCO
  no switchport
  ip address 172.1.8.10 255.255.255.252
 !
 interface GigabitEthernet1/0/14
-  desciption Connection to HO-R2-HP
-  no switchport
-  ip address 172.1.8.22 255.255.255.252
+ no switchport
+ ip address 172.1.8.22 255.255.255.252
 !
 interface GigabitEthernet1/0/15
-  no switchport
-  no ip address
-  channel-group 1 mode on
+ no switchport
+ no ip address
+ channel-group 1 mode on
 !
 interface GigabitEthernet1/0/16
-  no switchport
-  no ip address
-  channel-group 1 mode on
+ no switchport
+ no ip address
+ channel-group 1 mode on
 !
 interface GigabitEthernet1/0/17
+ switchport trunk allowed vlan 10,30
+ switchport mode trunk
+ channel-group 3 mode on
+ spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/18
+ switchport trunk allowed vlan 10,30
+ switchport mode trunk
+ channel-group 3 mode on
+ spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/19
+ switchport trunk allowed vlan 14,34
+ switchport mode trunk
+ channel-group 4 mode on
 !
 interface GigabitEthernet1/0/20
+ switchport trunk allowed vlan 14,34
+ switchport mode trunk
+ channel-group 4 mode on
 !
 interface GigabitEthernet1/0/21
+ switchport trunk allowed vlan 17,37
+ switchport mode trunk
+ channel-group 7 mode on
 !
 interface GigabitEthernet1/0/22
+ switchport trunk allowed vlan 17,37
+ switchport mode trunk
+ channel-group 7 mode on
 !
 interface GigabitEthernet1/0/23
 !
@@ -301,46 +328,85 @@ interface GigabitEthernet1/1/4
 !
 interface Vlan1
  no ip address
- shutdown
 !
 interface Vlan10
- ip address 172.1.10.230 255.255.255.0
+ ip address 172.1.10.251 255.255.255.0
  ip helper-address 172.1.10.253
- glbp 10 name SERVERS
- glbp 10 ip 172.1.10.1
- glbp 10 authentication md5 key-chain AuthenticatedGLBP
- glbp 10 timers msec 500 msec 2000
- glbp 10 priority 100
- glbp 10 load-balancing round-robin
  ipv6 enable
+ glbp 10 ip 172.1.10.1
+ glbp 10 timers msec 500 2
+ glbp 10 authentication md5 key-chain AuthenticatedGLBP
+ glbp 10 name SERVERS
 !
 interface Vlan30
  ip address 172.1.30.251 255.255.255.0
  ip helper-address 172.1.10.253
- glbp 10 name MANAGEMENT
- glbp 10 ip 172.1.30.1
- glbp 10 authentication md5 key-chain AuthenticatedGLBP
- glbp 10 timers msec 500 msec 2000
- glbp 10 priority 100
- glbp 10 load-balancing round-robin
  ipv6 enable
+ glbp 10 ip 172.1.30.1
+ glbp 10 timers msec 500 2
+ glbp 10 priority 254
+ glbp 10 authentication md5 key-chain AuthenticatedGLBP
+ glbp 10 name MANAGEMENT
 !
 router ospf 1
  router-id 4.4.4.4
- passive-interface Vlan 10
- passive-interface Vlan 30
+ passive-interface Vlan10
+ passive-interface Vlan30
  network 172.1.8.8 0.0.0.3 area 0
+ network 172.1.8.20 0.0.0.3 area 0
  network 172.1.8.24 0.0.0.3 area 0
  network 172.1.10.0 0.0.0.255 area 0
  network 172.1.30.0 0.0.0.255 area 0
 !
 ip forward-protocol nd
-ip http server
+no ip http server
 ip http authentication local
-ip http secure-server
-ip ssh version 2
+no ip http secure-server
 !
 !
+ip access-list extended AutoQos-4.0-wlan-Acl-Bulk-Data
+ permit tcp any any eq 22
+ permit tcp any any eq 465
+ permit tcp any any eq 143
+ permit tcp any any eq 993
+ permit tcp any any eq 995
+ permit tcp any any eq 1914
+ permit tcp any any eq ftp
+ permit tcp any any eq ftp-data
+ permit tcp any any eq smtp
+ permit tcp any any eq pop3
+ip access-list extended AutoQos-4.0-wlan-Acl-MultiEnhanced-Conf
+ permit udp any any range 16384 32767
+ permit tcp any any range 50000 59999
+ip access-list extended AutoQos-4.0-wlan-Acl-Scavanger
+ permit tcp any any range 2300 2400
+ permit udp any any range 2300 2400
+ permit tcp any any range 6881 6999
+ permit tcp any any range 28800 29100
+ permit tcp any any eq 1214
+ permit udp any any eq 1214
+ permit tcp any any eq 3689
+ permit udp any any eq 3689
+ permit tcp any any eq 11999
+ip access-list extended AutoQos-4.0-wlan-Acl-Signaling
+ permit tcp any any range 2000 2002
+ permit tcp any any range 5060 5061
+ permit udp any any range 5060 5061
+ip access-list extended AutoQos-4.0-wlan-Acl-Transactional-Data
+ permit tcp any any eq 443
+ permit tcp any any eq 1521
+ permit udp any any eq 1521
+ permit tcp any any eq 1526
+ permit udp any any eq 1526
+ permit tcp any any eq 1575
+ permit udp any any eq 1575
+ permit tcp any any eq 1630
+ permit udp any any eq 1630
+ permit tcp any any eq 1527
+ permit tcp any any eq 6200
+ permit tcp any any eq 3389
+ permit tcp any any eq 5985
+ permit tcp any any eq 8080
 !
 !
 !

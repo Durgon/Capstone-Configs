@@ -1,7 +1,3 @@
-Current configuration : 7036 bytes
-!
-! Last configuration change at 00:19:28 UTC Sun Mar 24 2019
-!
 version 16.3
 service timestamps debug datetime msec
 service timestamps log datetime msec
@@ -28,6 +24,7 @@ no aaa new-model
 !
 ip name-server 172.1.10.252 172.1.10.253
 
+no ip domain lookup
 ip domain name glowingearth.org
 !
 !
@@ -40,13 +37,19 @@ ip domain name glowingearth.org
 !
 !
 subscriber templating
+vtp domain cisco
+vtp mode transparent
 !
 !
 !
- --More--
-*Mar 21 22:02:20.616: %SYS-5-CONFIG_I: Configured from console by console
 multilink bundle-name authenticated
 !
+!
+key chain AuthenticatedOSPF
+ description MD5 Key for authenticated OSPF
+ key 1
+  key-string RootIT2019_OSPF
+   cryptographic-algorithm md5
 !
 !
 crypto pki trustpoint TP-self-signed-2401077705
@@ -56,37 +59,6 @@ crypto pki trustpoint TP-self-signed-2401077705
  rsakeypair TP-self-signed-2401077705
 !
 !
-crypto pki certificate chain TP-self-signed-2401077705
- certificate self-signed 01
-  30820330 30820218 A0030201 02020101 300D0609 2A864886 F70D0101 05050030
-  31312F30 2D060355 04031326 494F532D 53656C66 2D536967 6E65642D 43657274
-  69666963 6174652D 32343031 30373737 3035301E 170D3139 30333231 31353036
-  33365A17 0D323030 31303130 30303030 305A3031 312F302D 06035504 03132649
-  4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D32 34303130
-  37373730 35308201 22300D06 092A8648 86F70D01 01010500 0382010F 00308201
-  0A028201 0100A2CF 591D0E22 2BDDCD2A 32B5D888 623CE24C 4007C530 74A9D549
-  D5F0EFED 2F06A530 9483C8E0 0E3E6037 9CA92DAC EC316FCB C33FCB55 E8450E0C
-  CF0B7BC2 AE012125 403B47AF D5BE11E4 7E3FF34F AF09C129 FD20681C 57BF457D
-  2FC7FA16 0495DE47 9E75E097 C8B0D4B0 3AF93C09 729DB519 830613C0 0E2326DA
-  AA536142 B3730132 74DF146E A6C287CA 37096FDC 7539ADA5 6270F0B8 DDB35EE0
-  B9D5F80F 7E02B72E D97DFA3C 607ACB9B 42A143D0 EE1F980E ECEBAF8D F01F397E
-  4A144AF1 BCBD7B47 72AEB8F4 D41270AF C7B13B74 9C861A51 6AD1B68A C7D777D9
-  7A3F3C54 746C5713 F5B46174 69E28CC1 6CA7C0DF 535E60AA 785C1F7F DB93BB8B
-  C266A65A DA8D0203 010001A3 53305130 0F060355 1D130101 FF040530 030101FF
-  301F0603 551D2304 18301680 14FEC235 0DFCA983 241F57DC 29ACB0CC 7FB210D1
-  A9301D06 03551D0E 04160414 FEC2350D FCA98324 1F57DC29 ACB0CC7F B210D1A9
-  300D0609 2A864886 F70D0101 05050003 82010100 6C5D3EF7 FB5589E5 55A845B3
-  FC591EBC 329DA1D5 F38AC8FC EBC9A1CF 394B1B04 29AAC90A 0A6251F1 293A67C2
-  B5608855 6C64498D 8C1509CF 1D42F38D BD2BFEAF 4943A936 D75F6B88 FA371EF7
-  61EB68F9 F667FF5B 2681222B D60109A8 E839AD4C 88D9B7CE BBC7A978 000CC8DF
-  AC7DE06D 5E0BF1C6 BC1E55B4 82E957CB 963AF95B B66C5152 84CA3085 98A29092
-  5FCD9626 C4B21827 CE7A6EF1 E8453089 02865EFF E8503AB2 A1893AE3 C8F0F975
-  18C38746 902E7D34 95F87ECD 93ABE3A5 131E82C1 1AEDEE0F 91873AC4 DD2BE23A
-  F3C7E1E5 8FA6E111 860F7E38 325E10A9 2047F9B4 19A5A7E5 F6682418 16B118A6
-  A18FD0AF 9C416CD9 1647718F FDED6AF0 FEEF299F
-        quit
-
-
 license udi pid ISR4321/K9 sn FDO201701GU
 !
 diagnostic bootup level minimal
@@ -108,18 +80,7 @@ vlan internal allocation policy ascending
 !
 !
 !
-crypto isakmp policy 1
- encr aes
- authentication pre-share
- group 5
-crypto isakmp key RootIT2019-key address 0.0.0.0
 !
-!
-crypto ipsec transform-set t-set esp-aes esp-sha-hmac
- mode transport
-!
-crypto ipsec profile RootIT2019
- set transform-set t-set
 !
 !
 !
@@ -144,10 +105,10 @@ interface Tunnel0
  ip nhrp network-id 1
  ip nhrp holdtime 300
  ip tcp adjust-mss 1360
+ shutdown
  tunnel source GigabitEthernet0/1/0
  tunnel mode gre multipoint
  tunnel key 1
- tunnel protection ipsec profile RootIT2019
 !
 interface GigabitEthernet0/0/0
  description Connection to HO-CLUSTER-L3SW1
@@ -186,11 +147,13 @@ router eigrp 1
 !
 router ospf 1
  router-id 2.2.2.2
+ area 0 range 172.1.0.0 255.255.0.0
+ area 4 range 172.4.0.0 255.255.0.0
+ summary-address 172.1.0.0 255.255.0.0
  redistribute eigrp 1 metric 100 subnets
  network 172.1.8.0 0.0.0.3 area 0
  network 172.1.8.8 0.0.0.3 area 0
  network 172.1.8.16 0.0.0.3 area 0
- neighbor 172.4.8.2
 !
 ip forward-protocol nd
 ip http server
@@ -218,7 +181,7 @@ ipv6 access-list preauth_v6
 !
 control-plane
 !
-banner login ^C
+banner login ^CC
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @@@@@@@@@@@@@@@',.,,,,'@@@@@@@@@@@@@@@
@@ -259,9 +222,7 @@ All configurations are property Glowing Earth corp.
 ^C
 !
 line con 0
- password cisco
  logging synchronous
- login
  stopbits 1
 line aux 0
  stopbits 1

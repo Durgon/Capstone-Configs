@@ -2,11 +2,11 @@
   -Instance 1: Head Office
   -Instance 4: Inkai
   -Instance 7: Dode Ster
-2) Configure key-chain authenticated OSPF
+2)Configure key-chain authenticated OSPF
   -Chain name AuthenticatedOSPF
   -key 1 string RootIT2019_OSPF
   ASA Config (On Inside Interface)
-    ospf messaage-digest-key 1 md5 RootIT2019_OSPF
+    ospf message-digest-key 1 md5 RootIT2019_OSPF
     ospf authentication message digest
   Cisco Router & Switch Config
     #in global config
@@ -15,9 +15,12 @@
         cryptographic-algorithm md5
         key-string RootIT2019_OSPF
     #on interface
-    ospf authentication key-chain AuthenticatedOSPF
+    ip ospf authentication key-chain AuthenticatedOSPF
   HP Router Config
     #in ospf config
     authentication-mode md5
     #on interface
     ospf authentication-mode md5 1 RootIT2019_OSPF
+3)Created local admin for devices
+  -username LocalAdmin
+  -password RootIT2019$LocalAdmin

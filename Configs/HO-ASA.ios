@@ -161,7 +161,7 @@ router ospf 1
  redistribute static
  default-information originate
 !
-route OUTSIDE-CONN-1 0.0.0.0 0.0.0.0 10.101.200.1 1
+route OUTSIDE-CONN-2 0.0.0.0 0.0.0.0 10.100.200.1 1
 timeout xlate 3:00:00
 timeout pat-xlate 0:00:30
 timeout conn 1:00:00 half-closed 0:10:00 udp 0:02:00 icmp 0:00:02

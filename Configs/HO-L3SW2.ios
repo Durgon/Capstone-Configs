@@ -1,6 +1,6 @@
-Current configuration : 10518 bytes
+Current configuration : 10625 bytes
 !
-! Last configuration change at 18:31:56 UTC Thu Mar 14 2019
+! Last configuration change at 22:43:06 UTC Thu Mar 28 2019
 !
 version 16.3
 no service pad
@@ -30,9 +30,6 @@ ip routing
 !
 !
 !
-ip name-server 172.1.10.252 172.1.10.253
-no ip domain lookup
-ip domain name glowingearth.org
 !
 !
 !
@@ -43,11 +40,14 @@ ip domain name glowingearth.org
 !
 !
 !
-vtp mode transparent
 !
 key chain AuthenticatedGLBP
  key 1
   key-string RootIT2019_GLBP
+key chain AuthenticatedOSPF
+ key 1
+  key-string RootIT2019_OSPF
+   cryptographic-algorithm md5
 !
 crypto pki trustpoint TP-self-signed-1310226334
  enrollment selfsigned
@@ -56,52 +56,25 @@ crypto pki trustpoint TP-self-signed-1310226334
  rsakeypair TP-self-signed-1310226334
 !
 !
-crypto pki certificate chain TP-self-signed-1310226334
- certificate self-signed 01
-  30820330 30820218 A0030201 02020101 300D0609 2A864886 F70D0101 05050030
-  31312F30 2D060355 04031326 494F532D 53656C66 2D536967 6E65642D 43657274
-  69666963 6174652D 31333130 32323633 3334301E 170D3139 30333134 31353139
-  33365A17 0D323030 31303130 30303030 305A3031 312F302D 06035504 03132649
-  4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D31 33313032
-  32363333 34308201 22300D06 092A8648 86F70D01 01010500 0382010F 00308201
-  0A028201 0100C8E3 1B221DCC 18956E4C 078AF8AC 19938920 871AAB38 0AD67C02
-  54F3DA59 AFEFD58E 84D7B8EF B3FD7667 F7DE8F08 333454F4 2BBC0DDB E3D7CBA7
-  4378F65D A0704011 C5C10673 394FFC42 AA2441B4 CDD79420 FE21E7C4 3D5F5621
-  B2DCF650 55071B37 C2F58162 8CF3E93D FFF5EE57 4E8F36C8 B906105D 9982C496
-  28D2315C 32A3DA63 96E28623 E1EBC233 E4D52118 F20CFD22 72D090C9 AACD886E
-  2E863CFE 6A28EAD7 E49D35D9 6D56EBF0 A429AB5A 6B4F600E EBD3B926 649725BF
-  8108A1F6 D657F4E3 CEB277E1 424CBD69 E92F1009 73708327 97D00C16 987B8F67
-  1BE7B246 CB47D21F 198E6DC3 FC9C6C21 F35CDBF5 E257B2F6 6AF09726 6B4704E2
-  ED89585E 49510203 010001A3 53305130 0F060355 1D130101 FF040530 030101FF
-  301F0603 551D2304 18301680 1446A450 01C38EF2 CA9DDE1B D44A2E7E E8F6425E
-  F2301D06 03551D0E 04160414 46A45001 C38EF2CA 9DDE1BD4 4A2E7EE8 F6425EF2
-  300D0609 2A864886 F70D0101 05050003 82010100 67AC0B48 4A4BC198 8CBA4D6D
-  E52EAC59 8F6A437C B12F065E 0E5CBF72 5218A05F D36996C3 85023B00 2D88FFDA
-  E020CBDC 50544DC7 52C57409 011DF555 0BCD38B7 86F67D21 CA984A8E 8BD75647
-  E0BB956F 108075B6 75A56C30 CD7791A3 1E2079D6 A0284B7B 022A3D9C B494C099
-  6D57FE14 7BC46899 E3E61605 DEA8A4E5 C5073DE5 D8C8D86B A7185215 39BC4126
-  31CF1EAD 4DB8E1E0 31128881 127F4CDA 7192D15D 1FDAEF87 9C6147E6 C7766552
-  AC8C0B5E F206BB8F 1C0F3E0A 778BFCF7 9913B4D1 D222316E 73E72D28 F3125137
-  1D5BD10D 63D6CA1C E60A79FB DC3BED8B 0015557E 9DBE0B91 0E554E26 D2AC9E0C
-  A34E5CF7 9AEA9662 84BE1114 EB6C7283 613CE2A4
-        quit
 !
 license boot level ipservicesk9
 diagnostic bootup level minimal
-spanning-tree mode rapid-pvst
+!
+spanning-tree mode mst
 spanning-tree extend system-id
+!
+spanning-tree mst configuration
+ name HeadOffice
+ revision 2
+ instance 1 vlan 10, 30
+!
+spanning-tree mst 1 priority 28672
 !
 !
 !
 redundancy
  mode sso
 !
-!
-vlan 10
- name SERVER
-!
-vlan 30
- name MANAGEMENT
 !
 !
 class-map match-any system-cpp-police-topology-control
@@ -186,6 +159,7 @@ interface Port-channel1
  ip address 172.1.8.26 255.255.255.252
 !
 interface Port-channel3
+ description Connection to HO-L2SW1 (G1/0/17-18)
  switchport mode trunk
  spanning-tree portfast trunk
 !
@@ -314,15 +288,16 @@ router ospf 1
  router-id 5.5.5.5
  passive-interface Vlan10
  passive-interface Vlan30
+ network 172.1.8.12 0.0.0.3 area 0
  network 172.1.8.16 0.0.0.3 area 0
  network 172.1.8.24 0.0.0.3 area 0
  network 172.1.10.0 0.0.0.255 area 0
  network 172.1.30.0 0.0.0.255 area 0
 !
 ip forward-protocol nd
-ip http server
+no ip http server
 ip http authentication local
-ip http secure-server
+no ip http secure-server
 !
 !
 ip access-list extended AutoQos-4.0-wlan-Acl-Bulk-Data

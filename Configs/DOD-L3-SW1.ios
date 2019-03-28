@@ -1,4 +1,5 @@
-Current configuration : 1805 bytes
+
+Current configuration : 1846 bytes
 !
 version 12.2
 no service pad
@@ -6,7 +7,7 @@ service timestamps debug datetime msec
 service timestamps log datetime msec
 no service password-encryption
 !
-hostname INK-L3SW1
+hostname DOD-L3-SW1
 !
 boot-start-marker
 boot-end-marker
@@ -15,7 +16,6 @@ boot-end-marker
 no aaa new-model
 system mtu routing 1500
 ip subnet-zero
-ip routing
 no ip domain-lookup
 !
 !
@@ -27,26 +27,25 @@ no ip domain-lookup
 !
 !
 !
-vlan 14,34
 !
 spanning-tree mode mst
 spanning-tree extend system-id
 !
 spanning-tree mst configuration
  name HeadOffice
- revision 2
- instance 2 vlan 14, 34
+ revision 3
+ instance 7 vlan 17, 37
 !
-spanning-tree mst 2 priority 24576
+spanning-tree mst 7 priority 24576
 !
 vlan internal allocation policy ascending
 !
 !
 !
 !
-interface Port-channel4
+interface Port-channel7
  switchport trunk encapsulation dot1q
- switchport trunk allowed vlan 14,34
+ switchport trunk allowed vlan 17,37
  switchport mode trunk
 !
 interface FastEthernet0/1
@@ -76,18 +75,20 @@ interface FastEthernet0/12
 interface FastEthernet0/13
 !
 interface FastEthernet0/14
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
 !
 interface FastEthernet0/15
  switchport trunk encapsulation dot1q
- switchport trunk allowed vlan 14,34
+ switchport trunk allowed vlan 17,37
  switchport mode trunk
- channel-group 4 mode on
+ channel-group 7 mode on
 !
 interface FastEthernet0/16
  switchport trunk encapsulation dot1q
- switchport trunk allowed vlan 14,34
+ switchport trunk allowed vlan 17,37
  switchport mode trunk
- channel-group 4 mode on
+ channel-group 7 mode on
 !
 interface FastEthernet0/17
 !
@@ -111,7 +112,6 @@ interface GigabitEthernet0/2
 !
 interface Vlan1
  no ip address
- shutdown
 !
 ip classless
 ip http server
