@@ -1,4 +1,4 @@
-<HPE>show current-configuration
+[HPE]show current-configuration
 #
  version 7.1.059, Release 0306P30
 #
@@ -23,6 +23,7 @@ interface GigabitEthernet0/0
  port link-mode route
  combo enable copper
  ip address 172.1.8.21 255.255.255.252
+ ospf 1 area 0.0.0.0
 #
 interface GigabitEthernet0/1
  port link-mode route
@@ -106,3 +107,4 @@ cwmp
  cwmp enable
 #
 return
+
