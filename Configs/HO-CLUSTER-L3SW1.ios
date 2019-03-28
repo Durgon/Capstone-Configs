@@ -28,11 +28,6 @@ ip dhcp excluded-address 172.1.30.1 172.1.30.3
 ip dhcp excluded-address 172.1.30.10
 ip dhcp excluded-address 172.1.30.249 172.1.30.254
 !
-ip dhcp pool EDM-MGMT
- network 172.1.30.0 255.255.255.0
- default-router 172.1.30.1
- dns-server 172.1.10.252
-!
 !
 !
 ipv6 unicast-routing
@@ -273,12 +268,12 @@ interface GigabitEthernet1/0/14
 interface GigabitEthernet1/0/15
   no switchport
   no ip address
-  channel-group 1 mode
+  channel-group 1 mode on
 !
 interface GigabitEthernet1/0/16
   no switchport
   no ip address
-  channel-group 1 mode
+  channel-group 1 mode on
 !
 interface GigabitEthernet1/0/17
 !
@@ -309,7 +304,7 @@ interface Vlan1
  shutdown
 !
 interface Vlan10
- ip address 172.1.10.251 255.255.255.0
+ ip address 172.1.10.230 255.255.255.0
  ip helper-address 172.1.10.253
  glbp 10 name SERVERS
  glbp 10 ip 172.1.10.1
@@ -332,8 +327,8 @@ interface Vlan30
 !
 router ospf 1
  router-id 4.4.4.4
- passive-interface Vlan10
- passive-interface Vlan30
+ passive-interface Vlan 10
+ passive-interface Vlan 30
  network 172.1.8.8 0.0.0.3 area 0
  network 172.1.8.24 0.0.0.3 area 0
  network 172.1.10.0 0.0.0.255 area 0
