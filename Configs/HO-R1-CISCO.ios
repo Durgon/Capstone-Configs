@@ -79,6 +79,18 @@ vlan internal allocation policy ascending
 !
 !
 !
+crypto isakmp policy 1
+ encr aes
+ authentication pre-share
+ group 5
+crypto isakmp key RootIT2019-key address 0.0.0.0
+!
+!
+crypto ipsec transform-set t-set esp-aes esp-sha-hmac
+ mode transport
+!
+crypto ipsec profile RootIT2019
+ set transform-set t-set
 !
 !
 !
@@ -122,6 +134,7 @@ interface GigabitEthernet0/0/1
 interface GigabitEthernet0/1/0
  description Connection to ASA Firewall
  ip address 172.1.8.2 255.255.255.252
+ ip ospf authentication key-chain AuthenticatedOSPF
  negotiation auto
 !
 interface GigabitEthernet0/1/1

@@ -1,3 +1,9 @@
+: Saved
+
+:
+: Serial Number: JAD192304S1
+: Hardware:   ASA5508, 8192 MB RAM, CPU Atom C2000 series 2000 MHz, 1 CPU (8 cores)
+:
 ASA Version 9.4(1)
 !
 hostname HO-ASA
@@ -33,6 +39,9 @@ interface GigabitEthernet1/3
  security-level 100
  zone-member INSIDE
  ip address 172.1.8.1 255.255.255.252
+ ospf priority 254
+ ospf message-digest-key 1 md5 *****
+ ospf authentication message-digest
 !
 interface GigabitEthernet1/4
  description Interface connected to the HP router at the Edmonton HO
@@ -40,6 +49,7 @@ interface GigabitEthernet1/4
  security-level 100
  zone-member INSIDE
  ip address 172.1.8.5 255.255.255.252
+ ospf priority 254
 !
 interface GigabitEthernet1/5
  shutdown
@@ -122,11 +132,12 @@ object-group service allow_internet_tcp
 object-group service allow_internet_udp
  description allow udp ports for allowing internet access
  service-object udp destination eq domain
-access-list TO_CISCO_access_in_1 extended permit ip object EDM-MGMT any
+access-list TO_CISCO_access_in_1 extended permit ip object EDM-MGMT any inactive
 access-list TO_CISCO_access_in_1 extended permit ip any any
 access-list OUTSIDE_CONN_access_in extended permit ip any any
-access-list global_access extended permit ip any any inactive
+access-list global_access extended permit ip any any
 access-list OUTSIDE-CONN_access_in extended permit ip any any
+access-list TO_HP_access_in extended permit ip any any
 pager lines 24
 logging enable
 logging asdm informational
@@ -144,19 +155,21 @@ arp timeout 14400
 no arp permit-nonconnected
 !
 object network EDM-MGMT
- nat (any,OUTSIDE-CONN-1) dynamic interface dns
+ nat (any,OUTSIDE-CONN-2) dynamic interface dns
 object network EDM-SERVER
- nat (any,OUTSIDE-CONN-1) dynamic interface dns
+ nat (any,OUTSIDE-CONN-2) dynamic interface dns
 object network permit_any
- nat (any,OUTSIDE-CONN-1) dynamic interface dns
+ nat (any,OUTSIDE-CONN-2) dynamic interface dns
 object network DMVPN_HUB
  nat (any,OUTSIDE-CONN-1) static DMVPN_OUTSIDE net-to-net
 access-group TO_CISCO_access_in_1 in interface TO_CISCO
+access-group TO_HP_access_in in interface TO_HP
 access-group OUTSIDE-CONN_access_in in interface OUTSIDE-CONN-1
 access-group global_access global
 router ospf 1
  router-id 1.1.1.1
  network 172.1.8.0 255.255.255.252 area 0
+ network 172.1.8.4 255.255.255.252 area 0
  log-adj-changes
  redistribute static
  default-information originate
@@ -241,5 +254,5 @@ call-home
   subscribe-to-alert-group configuration periodic monthly 3
   subscribe-to-alert-group telemetry periodic daily
 hpm topN enable
-Cryptochecksum:b59b09683150e60a87715dde2cb5ed4c
+Cryptochecksum:c14071cb3d8c24221768d1b93cd89824
 : end
