@@ -1,3 +1,12 @@
+Current configuration : 2901 bytes
+!
+! Last configuration change at 17:25:18 UTC Tue Apr 2 2019
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
 hostname DOD-R1
 !
 boot-start-marker
@@ -30,6 +39,10 @@ multilink bundle-name authenticated
 !
 !
 !
+!
+key chain AuthenticatedOSPF
+ key 1
+  key-string RootIT2019_OSPF
 !
 !
 voice-card 0
@@ -78,12 +91,14 @@ crypto ipsec profile RootIT2019
 interface Tunnel0
  ip address 10.10.10.3 255.255.255.0
  no ip redirects
+ ip mtu 1400
  ip nhrp authentication Root2019
  ip nhrp map 10.10.10.1 10.101.201.239
  ip nhrp map multicast 10.101.201.239
  ip nhrp network-id 1
  ip nhrp nhs 10.10.10.1
- tunnel source GigabitEthernet0/0
+ ip tcp adjust-mss 1360
+ tunnel source GigabitEthernet0/2
  tunnel mode gre multipoint
  tunnel key 1
  tunnel protection ipsec profile RootIT2019
@@ -94,7 +109,10 @@ interface Embedded-Service-Engine0/0
 !
 interface GigabitEthernet0/0
  description Outside Connection
- ip address 10.101.201.240 255.255.254.0
+ ip address 172.7.8.1 255.255.255.252
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 RootIT2019_OSPF
+ ip ospf priority 254
  duplex auto
  speed auto
 !
@@ -105,8 +123,7 @@ interface GigabitEthernet0/1
  speed auto
 !
 interface GigabitEthernet0/2
- no ip address
- shutdown
+ ip address 10.101.201.240 255.255.254.0
  duplex auto
  speed auto
 !
@@ -124,15 +141,25 @@ interface FastEthernet0/0/1
 !
 !
 router eigrp 1
+ default-metric 10000 100 255 1 1500
  network 10.10.10.0 0.0.0.255
+ redistribute ospf 1
+!
+router ospf 1
+ router-id 1.1.1.1
+ summary-address 172.7.0.0 255.255.0.0 tag 7
+ redistribute eigrp 1 metric 100 subnets tag 7
+ network 172.7.8.0 0.0.0.3 area 0
+ default-information originate
 !
 ip forward-protocol nd
 !
 no ip http server
 no ip http secure-server
 !
-ip route 0.0.0.0 0.0.0.0 10.100.201.1
 !
+!
+route-map TEST permit 10
 !
 !
 !
@@ -171,7 +198,6 @@ gatekeeper
  vstack
 !
 line con 0
- logging synchronous
 line aux 0
 line 2
  no activation-character

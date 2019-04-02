@@ -22,6 +22,10 @@ no ip domain-lookup
 !
 !
 !
+key chain AuthenticatedOSPF
+ description MD5 Key for authenticated OSPF
+ key 1
+  key-string RootIT2019_OSPF
 !
 !
 !

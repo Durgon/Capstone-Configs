@@ -117,10 +117,10 @@ interface Tunnel0
  ip nhrp network-id 1
  ip nhrp holdtime 300
  ip tcp adjust-mss 1360
- shutdown
  tunnel source GigabitEthernet0/1/0
  tunnel mode gre multipoint
  tunnel key 1
+ tunnel protection ipsec profile RootIT2019
 !
 interface GigabitEthernet0/0/0
  description Connection to HO-CLUSTER-L3SW1
@@ -156,22 +156,21 @@ interface Vlan1
 router eigrp 1
  default-metric 10000 100 255 1 1500
  network 10.10.10.0 0.0.0.255
+ no auto-summary
  redistribute ospf 1
 !
 router ospf 1
  router-id 2.2.2.2
- area 0 range 172.1.0.0 255.255.0.0
- area 4 range 172.4.0.0 255.255.0.0
- summary-address 172.1.0.0 255.255.0.0
- redistribute eigrp 1 metric 100 subnets
+ summary-address 172.1.0.0 255.255.0.0 tag 1
+ redistribute eigrp 1 metric 100 tag 1
  network 172.1.8.0 0.0.0.3 area 0
  network 172.1.8.8 0.0.0.3 area 0
  network 172.1.8.16 0.0.0.3 area 0
 !
 ip forward-protocol nd
-ip http server
-ip http authentication local
-ip http secure-server
+no ip http server
+no ip http authentication local
+no ip http secure-server
 ip tftp source-interface GigabitEthernet0
 !
 !
