@@ -1,0 +1,24 @@
+username LocalAdmin priv 15 secret RootIT2019$
+ip domain-name glowingearth.org
+ip name-server 172.1.10.253 172.1.10.252
+crypto key generate rsa modulus 1024
+ip ssh version 2
+
+!for HO devices
+ip access-list standard HO_SSH_ACCESS
+remark HO Management network only allowed to connect SSH into HO devices
+permit 172.1.30.0 0.0.0.255
+!
+line vty 0 15
+login local
+access-class HO_SSH_ACCESS in
+!
+!
+ip access-list standard SITE_SSH_ACCESS
+remark Site Management network can access only site devices, while HO Management network can access all devices
+permit 172.X.30.0 0.0.0.255
+permit 172.1.30.0 0.0.0.255
+!
+line vty 0 15
+login Local
+access-class SITE_SSH_ACCESS

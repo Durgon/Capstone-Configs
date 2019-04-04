@@ -108,7 +108,7 @@ interface Embedded-Service-Engine0/0
  shutdown
 !
 interface GigabitEthernet0/0
- description Outside Connection
+ description LAN Connection
  ip address 172.7.8.1 255.255.255.252
  ip ospf authentication message-digest
  ip ospf message-digest-key 1 md5 RootIT2019_OSPF
@@ -123,7 +123,8 @@ interface GigabitEthernet0/1
  speed auto
 !
 interface GigabitEthernet0/2
- ip address 10.101.201.240 255.255.254.0
+ description WAN Connection
+ ip address 10.101.201.242 255.255.254.0
  duplex auto
  speed auto
 !

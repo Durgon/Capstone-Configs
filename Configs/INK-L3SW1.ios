@@ -34,8 +34,8 @@ spanning-tree extend system-id
 !
 spanning-tree mst configuration
  name HeadOffice
- revision 2
- instance 2 vlan 14, 34
+ revision 4
+ instance 4 vlan 14,24,34,44,54,94
 !
 spanning-tree mst 2 priority 24576
 !
@@ -74,6 +74,11 @@ interface FastEthernet0/11
 interface FastEthernet0/12
 !
 interface FastEthernet0/13
+ description Connection to INK-R1-Cisco
+ no switchport
+ no shutdown
+ ip address 172.4.8.14 255.255.255.252
+ ip ospf message-digest-key 1 md5 RootIT2019_OSPF
 !
 interface FastEthernet0/14
 !

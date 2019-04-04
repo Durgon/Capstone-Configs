@@ -65,10 +65,10 @@ spanning-tree extend system-id
 !
 spanning-tree mst configuration
  name HeadOffice
- revision 2
- instance 1 vlan 10, 30
+ revision 4
+ instance 1 vlan 10,20,30,40,50,90
 !
-spanning-tree mst 1 priority 28672
+spanning-tree mst 1 root secondary
 !
 !
 !
@@ -276,6 +276,16 @@ interface Vlan10
  glbp 10 preempt
  glbp 10 authentication md5 key-chain AuthenticatedGLBP
  glbp 10 name SERVERS
+!
+interface Vlan20
+ ip address 172.1.20.253 255.255.255.0
+ ip helper-address 172.1.10.253
+ ipv6 enable
+ glbp 10 ip 172.1.20.1
+ glbp 10 timers msec 500 2
+ glbp 10 priority 254
+ glbp 10 authentication md5 key-chain AuthenticatedGLBP
+ glbp 10 name VOICE
 !
 interface Vlan30
  ip address 172.1.30.250 255.255.255.0

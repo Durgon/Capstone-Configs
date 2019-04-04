@@ -59,11 +59,11 @@ crypto pki trustpoint TP-self-signed-2401077705
  rsakeypair TP-self-signed-2401077705
 !
 !
-license udi pid ISR4321/K9 sn FDO201701GU
 !
 diagnostic bootup level minimal
 spanning-tree extend system-id
 !
+username LocalAdmin privilege 15 secret 5 $1$bsd0$FOADGU66lGEi58Y6gK3D41
 !
 redundancy
  mode none
@@ -73,6 +73,7 @@ redundancy
 !
 !
 vlan internal allocation policy ascending
+!
 !
 !
 !
@@ -105,8 +106,6 @@ crypto ipsec profile RootIT2019
 !
 !
 !
-!
-!
 interface Tunnel0
  ip address 10.10.10.1 255.255.255.0
  no ip redirects
@@ -116,6 +115,7 @@ interface Tunnel0
  ip nhrp authentication Root2019
  ip nhrp network-id 1
  ip nhrp holdtime 300
+ ip nhrp registration timeout 30
  ip tcp adjust-mss 1360
  tunnel source GigabitEthernet0/1/0
  tunnel mode gre multipoint
@@ -125,6 +125,7 @@ interface Tunnel0
 interface GigabitEthernet0/0/0
  description Connection to HO-CLUSTER-L3SW1
  ip address 172.1.8.9 255.255.255.252
+ ip ospf authentication key-chain AuthenticatedOSPF
  negotiation auto
 !
 interface GigabitEthernet0/0/1
@@ -156,23 +157,27 @@ interface Vlan1
 router eigrp 1
  default-metric 10000 100 255 1 1500
  network 10.10.10.0 0.0.0.255
- no auto-summary
  redistribute ospf 1
+ no auto-summary
 !
 router ospf 1
  router-id 2.2.2.2
  summary-address 172.1.0.0 255.255.0.0 tag 1
- redistribute eigrp 1 metric 100 tag 1
+ redistribute eigrp 1 metric 100 subnets tag 1
  network 172.1.8.0 0.0.0.3 area 0
  network 172.1.8.8 0.0.0.3 area 0
  network 172.1.8.16 0.0.0.3 area 0
 !
 ip forward-protocol nd
 no ip http server
-no ip http authentication local
 no ip http secure-server
 ip tftp source-interface GigabitEthernet0
 !
+ip ssh version 2
+!
+ip access-list standard HO_SSH_ACCESS
+ remark HO Management network only allowed to connect SSH into HO devices
+ permit 172.1.30.0 0.0.0.255
 !
 !
 !
@@ -239,7 +244,11 @@ line con 0
 line aux 0
  stopbits 1
 line vty 0 4
- login
+ access-class HO_SSH_ACCESS in
+ login local
+line vty 5 15
+ access-class HO_SSH_ACCESS in
+ login local
 !
 !
 !

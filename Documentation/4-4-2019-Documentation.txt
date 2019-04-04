@@ -1,0 +1,9 @@
+1) Fixed NAT issue with DODE-STER site on ASA
+  -configured NAT Overloaded on the tunnel interface on DOD-R1
+  -allowed the DOD-R1 tunnel0 ip address to NAT through HO-ASA
+2)Applied all VLANs to the appropriate instances on MST, incremented rev #
+3)Investigate this to see if it's worth implementing:
+  -https://community.cisco.com/t5/routing/route-all-traffic-over-dmvpn-from-spoke-to-hub-and-out-asa-fw/td-p/2640661
+  -https://community.cisco.com/t5/routing/dmvpn-default-gateway-issue/td-p/2529093
+  -https://community.cisco.com/t5/routing/dmvpn-default-gateway-issue/td-p/2529093
+4)Gave jordan his voice VLAN, added SVI configs

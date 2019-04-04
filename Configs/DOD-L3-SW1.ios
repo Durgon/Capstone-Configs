@@ -37,8 +37,8 @@ spanning-tree extend system-id
 !
 spanning-tree mst configuration
  name HeadOffice
- revision 3
- instance 7 vlan 17, 37
+ revision 4
+ instance 7 vlan 17,24,37,47,57,97
 !
 spanning-tree mst 7 priority 24576
 !
