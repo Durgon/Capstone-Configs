@@ -44,6 +44,10 @@ key chain AuthenticatedOSPF
  key 1
   key-string RootIT2019_OSPF
 !
+key chain AuthenticatedEIGRP
+  description Key for authenticated EIGRP
+  key 1
+    key-string RootIT2019_EIGRP
 !
 voice-card 0
 !
@@ -69,14 +73,19 @@ redundancy
 !
 !
 !
+crypto keyring DMVPN_KEY
+  pre-shared-key address 0.0.0.0 0.0.0.0 key RootIT2019_DMVPN
+!
 crypto isakmp policy 1
  encr aes
  authentication pre-share
  group 5
-crypto isakmp key RootIT2019-key address 0.0.0.0
 !
+crypto isakmp profile DMVPN
+  keyring DMVPN_KEY
+  match identity address 0.0.0.0
 !
-crypto ipsec transform-set t-set esp-aes esp-sha-hmac
+crypto ipsec transform-set t-set esp-aes 256 esp-sha256-hmac
  mode transport
 !
 crypto ipsec profile RootIT2019
@@ -97,6 +106,10 @@ interface Tunnel0
  ip nhrp map multicast 10.101.201.239
  ip nhrp network-id 1
  ip nhrp nhs 10.10.10.1
+ ip nhrp shortcut
+ ip nhrp holdtime 300
+ ip authentication key-chain eigrp 1 AuthenticatedEIGRP
+ ip authentication mode 1 md5
  ip tcp adjust-mss 1360
  tunnel source GigabitEthernet0/2
  tunnel mode gre multipoint
@@ -195,20 +208,59 @@ mgcp profile default
 gatekeeper
  shutdown
 !
+banner login ^CC
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@',.,,,,'@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@,,,,,,,,,,,,@@@@@@@@@@@@@
+@@@@@@@@@@@@,:,,,,,,,,,,,,@@@@@@@@@@@@
+@@@@@@@@@@@@;,,,,,,,,,,,,,@@@@@@@@@@@@
+@@@@@@@@@@@@@,,,,,,,,,,,,@@@@@@@@@@@@@
+@@@@@@@@@@@@@#,,,,,,,,,,,@@@@@@@@@@@@@
+@@@@@@@@@@@@@@.,,,,,,,,,@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@,,,,,,,,;@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@:,,,,,,,@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@,,,,,,'@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@'.;'.,@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@##';+#@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@##+;:`.#@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@+'';',;'@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@'+'''+''@@@@@@@@@@@@@@@
+@@@@###########''';+';'@##########@@@@
+@@@@.,,,,,,,,,;'+++''';@,,,,,,,,,,@@@@
+@@@@,,,,,,,,,,,#+++'+';@,,,,,,,,,,@@@@
+@@@@,,,,,,,,,,,@#++'''@,,,,,,,,,,,@@@@
+@@@@;,,,,,,,,,,,#@+'#@,,,,,,,,,,,,@@@@
+@@@@@,,,,,,,,,,,@@@@@@,,,,,,,,,,,.@@@@
+@@@@@,,,,,,,,,,;@@@@@@@,,,,,,,,,,'@@@@
+@@@@@;,,,,,,,,,@@@@@@@@+,,,,,,,,,@@@@@
+@@@@@@,,,,,,,,#@@@@@@@@@.,,,,,,,;@@@@@
+@@@@@@+,,,,,,,@@@@@@@@@@@,,,,,,,@@@@@@
+@@@@@@@,,,,,,@@@@@@@@@@@@;,,,,,@@@@@@@
+@@@@@@@@,,,,'@@@@@@@@@@@@@,,,,@@@@@@@@
+@@@@@@@@@',.@@@@@@@@@@@@@@@,.@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@'@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-----------------------------------------------------------------------------------------------------------------------------
+YOU ARE CONNECTING TOO $(hostname)@$(domain) ON LINE $(line)($(line-desc))
+THIS IS A SECURE SYSTEM. ACCESS RESTRICTED TO AUTHORIZED USERS ONLY. UNAUTHORIZED USERS ARE FORBIDDEN AND WILL BE PROSECUTED.
+All configurations are property Glowing Earth corp.
+-----------------------------------------------------------------------------------------------------------------------------
+^C
 !
  vstack
 !
 line con 0
-line aux 0
-line 2
- no activation-character
- no exec
- transport preferred none
- transport output pad telnet rlogin lapb-ta mop udptn v120 ssh
+ logging synchronous
  stopbits 1
+line aux 0
 line vty 0 4
- login
- transport input none
+ access-class HO_SSH_ACCESS in
+ login local
+line vty 5 15
+ access-class HO_SSH_ACCESS in
+ login local
+!
 !
 scheduler allocate 20000 1000
 !
