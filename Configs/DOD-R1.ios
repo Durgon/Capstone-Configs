@@ -106,7 +106,6 @@ interface Tunnel0
  ip nhrp map multicast 10.101.201.239
  ip nhrp network-id 1
  ip nhrp nhs 10.10.10.1
- ip nhrp shortcut
  ip nhrp holdtime 300
  ip authentication key-chain eigrp 1 AuthenticatedEIGRP
  ip authentication mode 1 md5

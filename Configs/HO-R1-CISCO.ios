@@ -23,7 +23,7 @@ no aaa new-model
 !
 !
 ip name-server 172.1.10.252 172.1.10.253
-
+!
 no ip domain lookup
 ip domain name glowingearth.org
 !
