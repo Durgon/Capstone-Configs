@@ -30,6 +30,9 @@ ip routing
 !
 !
 !
+ip name-server 172.1.10.252 172.1.10.253
+no ip domain lookup
+ip domain name glowingearth.org
 !
 !
 !
@@ -39,7 +42,17 @@ ip routing
 !
 !
 !
+spanning-tree mode mst
+spanning-tree extend system-id
 !
+spanning-tree mst configuration
+ name HeadOffice
+ revision 4
+ instance 1 vlan 10,20,30,40,50,90
+ instance 4 vlan 14,24,34,44,54,94
+ instance 7 vlan 17,24,37,47,57,97
+!
+username LocalAdmin privilege 15 secret RootIT2019$
 !
 key chain AuthenticatedGLBP
  key 1
@@ -155,6 +168,7 @@ policy-map system-cpp-policy
 !
 !
 interface Port-channel1
+ description Connection to H
  no switchport
  ip address 172.1.8.26 255.255.255.252
 !

@@ -129,8 +129,9 @@ interface Tunnel0
  ip nhrp holdtime 300
  ip nhrp registration timeout 30
  ip tcp adjust-mss 1360
+ ip summary-address eigrp 1 172.1.0.0 255.255.0.0
  ip authentication key-chain eigrp 1 AuthenticatedEIGRP
- ip authentication mode 1 md5
+ ip authentication mode eigrp 1 md5
  tunnel source GigabitEthernet0/1/0
  tunnel mode gre multipoint
  tunnel key 1
@@ -176,8 +177,7 @@ router eigrp 1
 !
 router ospf 1
  router-id 2.2.2.2
- summary-address 172.1.0.0 255.255.0.0 tag 1
- redistribute eigrp 1 metric 100 subnets tag 1
+ redistribute eigrp 1 metric 100 subnets
  network 172.1.8.0 0.0.0.3 area 0
  network 172.1.8.8 0.0.0.3 area 0
  network 172.1.8.16 0.0.0.3 area 0

@@ -27,7 +27,7 @@ no ip domain-lookup
 !
 !
 !
-vlan 14,34
+vlan 14,24,34,44,54,94
 !
 spanning-tree mode mst
 spanning-tree extend system-id
@@ -46,7 +46,7 @@ vlan internal allocation policy ascending
 !
 interface Port-channel4
  switchport trunk encapsulation dot1q
- switchport trunk allowed vlan 14,34
+ switchport trunk allowed vlan 14,24,34,44,54,94
  switchport mode trunk
 !
 interface FastEthernet0/1

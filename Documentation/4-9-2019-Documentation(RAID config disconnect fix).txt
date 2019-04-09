@@ -1,0 +1,9 @@
+1) Recovered disconnected RAID configuration and remounted the vmware datastore
+-boot into the RAID controller OS and import the foreign configuration
+-if the datastores cannot be rediscovered by vmware...
+  ->enable the ssh shell on the vmware host and connect to the machine
+  ->run "esxcfg-volume -l" to find volumes on the machine, copy the appropriate UUID of the volume
+  ->run "esxcfg-mount -M <UUID>"
+-datastore should be available now.
+-if vcenter doesn't show up with the webpage, run "service-control --start --all" to start all services again
+2)

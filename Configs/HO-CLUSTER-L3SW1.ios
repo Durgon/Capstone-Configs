@@ -72,13 +72,13 @@ spanning-tree mst configuration
  revision 4
  instance 1 vlan 10,20,30,40,50,90
  instance 4 vlan 14,24,34,44,54,94
- instance 7 vlan 17,24,37,47,57,97
+ instance 7 vlan 17,27,37,47,57,97
 !
 spanning-tree mst 1 priority 24576
 spanning-tree mst 2,7 priority 28672
 !
 !
-username cisco privilege 15 one-time password 0 FDO2005Q18M
+username LocalAdmin privilege 15 secret RootIT2019$
 !
 redundancy
  mode sso
@@ -169,15 +169,15 @@ interface Port-channel1
 !
 interface Port-channel3
  description Connection to HO-L2SW1 (G1/0/17-18)
- switchport trunk allowed vlan 10,20,30
+ switchport trunk allowed vlan 10,20,30,40,50,90
  switchport mode trunk
 !
 interface Port-channel4
- switchport trunk allowed vlan 14,34
+ switchport trunk allowed vlan 14,24,34,44,54,94
  switchport mode trunk
 !
 interface Port-channel7
- switchport trunk allowed vlan 17,37
+ switchport trunk allowed vlan 17,27,37,47,57,97
  switchport mode trunk
 !
 interface GigabitEthernet0/0
@@ -187,42 +187,42 @@ interface GigabitEthernet0/0
 !
 interface GigabitEthernet1/0/1
  description ESXI Trunk link
- switchport trunk allowed vlan 10,20,30
+ switchport trunk allowed vlan 10,14,17,20,24,27,30,34,37,40,44,47,50,54,57,90,94
  switchport mode trunk
  switchport nonegotiate
  spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/2
  description ESXI Trunk link
- switchport trunk allowed vlan 10,20,30
+ switchport trunk allowed vlan 10,14,17,20,24,27,30,34,37,40,44,47,50,54,57,90,94
  switchport mode trunk
  switchport nonegotiate
  spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/3
  description ESXI Trunk link
- switchport trunk allowed vlan 10,20,30
+ switchport trunk allowed vlan 10,14,17,20,24,27,30,34,37,40,44,47,50,54,57,90,94
  switchport mode trunk
  switchport nonegotiate
  spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/4
  description ESXI Trunk link
- switchport trunk allowed vlan 10,20,30
+ switchport trunk allowed vlan 10,14,17,20,24,27,30,34,37,40,44,47,50,54,57,90,94
  switchport mode trunk
  switchport nonegotiate
  spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/5
  description ESXI Trunk link
- switchport trunk allowed vlan 10,20,30
+ switchport trunk allowed vlan 10,14,17,20,24,27,30,34,37,40,44,47,50,54,57,90,94
  switchport mode trunk
  switchport nonegotiate
  spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/6
  description ESXI Trunk link
- switchport trunk allowed vlan 10,20,30
+ switchport trunk allowed vlan 10,14,17,20,24,27,30,34,37,40,44,47,50,54,57,90,94
  switchport mode trunk
  switchport nonegotiate
  spanning-tree portfast trunk
@@ -374,7 +374,7 @@ router ospf 1
 !
 ip forward-protocol nd
 no ip http server
-ip http authentication local
+no ip http authentication local
 no ip http secure-server
 !
 ip ssh version 2
