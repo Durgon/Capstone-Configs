@@ -85,6 +85,7 @@ redundancy
 !
 !
 !
+crypto identity INK_Spoke
 !
 crypto keyring DMVPN_KEY
   pre-shared-key address 0.0.0.0 0.0.0.0 key RootIT2019_DMVPN
@@ -103,6 +104,8 @@ crypto ipsec transform-set t-set esp-aes 256 esp-sha256-hmac
 !
 crypto ipsec profile RootIT2019
  set transform-set t-set
+ set identity INK_Spoke
+ group 14
 !
 !
 !
@@ -114,14 +117,15 @@ crypto ipsec profile RootIT2019
 !
 !
 interface Tunnel0
- ip address 10.10.10.2 255.255.255.0
+ ip address 10.10.10.4 255.255.255.0
+ bandwidth 1000000
  no shutdown
  no ip redirects
  ip mtu 1400
  ip nhrp authentication Root2019
  ip nhrp map 10.10.10.1 10.101.201.239
  ip nhrp map multicast 10.101.201.239
- ip nhrp network-id 1
+ ip nhrp network-id 4
  ip nhrp nhs 10.10.10.1
  ip nhrp shortcut
  ip nhrp holdtime 300

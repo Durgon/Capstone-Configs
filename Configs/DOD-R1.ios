@@ -74,7 +74,7 @@ redundancy
 !
 !
 !
-!
+crypto identity DOD_Spoke
 !
 crypto keyring DMVPN_KEY
   pre-shared-key address 0.0.0.0 0.0.0.0 key RootIT2019_DMVPN
@@ -93,6 +93,8 @@ crypto ipsec transform-set t-set esp-aes 256 esp-sha256-hmac
 !
 crypto ipsec profile RootIT2019
  set transform-set t-set
+ set identity DOD_Spoke
+ group 14
 !
 !
 !
@@ -101,15 +103,22 @@ crypto ipsec profile RootIT2019
 !
 !
 interface Tunnel0
- ip address 10.10.10.3 255.255.255.0
+ ip address 10.10.10.7 255.255.255.0
+ ipv6 address 524f:4f54:4954:10::3/64
+ ipv6 address FE80::1010 link-local
+ bandwidth 1000000
  no ip redirects
  ip mtu 1400
+ ipv6 mtu 1400
  ip nhrp authentication Root2019
+ ipv6 nhrp authentication Root2019
  ip nhrp map 10.10.10.1 10.101.201.239
  ip nhrp map multicast 10.101.201.239
- ip nhrp network-id 1
+ ip nhrp network-id 4
+ ipv6 nhrp network-id 6
  ip nhrp nhs 10.10.10.1
  ip nhrp holdtime 300
+ ipv6 nhrp holdtime 300
  ip summary-address eigrp 1 172.7.0.0 255.255.0.0
  ip authentication key-chain eigrp 1 AuthenticatedEIGRP
  ip authentication mode eigrp 1 md5
