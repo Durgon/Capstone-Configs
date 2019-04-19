@@ -184,7 +184,6 @@ no ip http secure-server
 !
 !
 !
-route-map TEST permit 10
 !
 !
 !
