@@ -1,6 +1,6 @@
-Current configuration : 1848 bytes
+Current configuration : 4648 bytes
 !
-! Last configuration change at 00:22:06 UTC Mon Mar 1 1993
+! Last configuration change at 13:51:13 UTC Tue Mar 2 1993
 !
 version 15.0
 no service pad
@@ -13,12 +13,33 @@ hostname HO-L2SW1
 boot-start-marker
 boot-end-marker
 !
+enable secret 5 $1$lPWu$4KNwo.U6oI3gSEf.x/UgW.
 !
-no aaa new-model
+username LocalAdmin privilege 15 secret 5 $1$mY3b$ZOcjMxqTc1r/XhLJOPGyl1
+aaa new-model
+!
+!
+aaa group server radius GEC_RAD
+ server-private 172.1.10.252 auth-port 1812 acct-port 1813 key RootIT2019_RADIUS
+ ip radius source-interface Vlan30
+!
+aaa authentication login default group GEC_RAD local
+aaa authentication login console group GEC_RAD local
+aaa authorization console
+aaa authorization exec default group GEC_RAD local
+!
+!
+!
+!
+!
+!
+aaa session-id common
 system mtu routing 1500
 !
 !
 no ip domain-lookup
+ip domain-name glowinearth.org
+ip host glowingearth.org 172.1.10.252
 !
 !
 !
@@ -34,11 +55,12 @@ spanning-tree extend system-id
 spanning-tree mst configuration
  name HeadOffice
  revision 4
- instance 1 vlan 10,20,30,40,50,90
+ instance 1 vlan 10, 20, 30, 40, 50, 90
 !
 !
 vlan internal allocation policy ascending
 !
+ip ssh version 2
 !
 !
 !
@@ -55,28 +77,48 @@ interface Port-channel3
  spanning-tree portfast trunk
 !
 interface FastEthernet0/1
+ switchport access vlan 30
+ switchport mode access
+ switchport voice vlan 20
+ spanning-tree portfast
 !
 interface FastEthernet0/2
+ switchport access vlan 30
+ switchport mode access
+ spanning-tree portfast
 !
 interface FastEthernet0/3
+ switchport access vlan 30
+ switchport mode access
+ switchport voice vlan 20
+ spanning-tree portfast
 !
 interface FastEthernet0/4
+ shutdown
 !
 interface FastEthernet0/5
+ shutdown
 !
 interface FastEthernet0/6
+ shutdown
 !
 interface FastEthernet0/7
+ shutdown
 !
 interface FastEthernet0/8
+ shutdown
 !
 interface FastEthernet0/9
+ shutdown
 !
 interface FastEthernet0/10
+ shutdown
 !
 interface FastEthernet0/11
+ shutdown
 !
 interface FastEthernet0/12
+ shutdown
 !
 interface FastEthernet0/13
  switchport mode trunk
@@ -95,33 +137,53 @@ interface FastEthernet0/16
  channel-group 3 mode on
 !
 interface FastEthernet0/17
+ shutdown
 !
 interface FastEthernet0/18
+ shutdown
 !
 interface FastEthernet0/19
+ shutdown
 !
 interface FastEthernet0/20
+ shutdown
 !
 interface FastEthernet0/21
+ shutdown
 !
 interface FastEthernet0/22
+ shutdown
 !
 interface FastEthernet0/23
+ shutdown
 !
 interface FastEthernet0/24
+ shutdown
 !
 interface GigabitEthernet0/1
+ shutdown
 !
 interface GigabitEthernet0/2
+ shutdown
 !
 interface Vlan1
  no ip address
+ shutdown
 !
-ip http server
-ip http secure-server
+interface Vlan30
+ ip address 172.1.30.249 255.255.255.0
+!
+no ip http server
+no ip http secure-server
+radius-server directed-request
+!
+!
 !
 !
 line con 0
+line vty 0 4
+ transport input ssh
 line vty 5 15
+ transport input ssh
 !
 end
