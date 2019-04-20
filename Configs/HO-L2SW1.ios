@@ -33,8 +33,8 @@ spanning-tree extend system-id
 !
 spanning-tree mst configuration
  name HeadOffice
- revision 1
- instance 1 vlan 10, 30
+ revision 4
+ instance 1 vlan 10,20,30,40,50,90
 !
 !
 vlan internal allocation policy ascending

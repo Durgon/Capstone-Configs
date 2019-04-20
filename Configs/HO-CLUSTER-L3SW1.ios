@@ -75,7 +75,7 @@ spanning-tree mst configuration
  instance 7 vlan 17,27,37,47,57,97
 !
 spanning-tree mst 1 priority 24576
-spanning-tree mst 2,7 priority 28672
+spanning-tree mst 4,7 priority 28672
 !
 !
 username LocalAdmin privilege 15 secret RootIT2019$
@@ -173,10 +173,12 @@ interface Port-channel3
  switchport mode trunk
 !
 interface Port-channel4
+ description Connection for Inkai servers
  switchport trunk allowed vlan 14,24,34,44,54,94
  switchport mode trunk
 !
 interface Port-channel7
+ description Connection for Dode-Ster servers
  switchport trunk allowed vlan 17,27,37,47,57,97
  switchport mode trunk
 !
@@ -286,34 +288,28 @@ interface GigabitEthernet1/0/16
  channel-group 1 mode on
 !
 interface GigabitEthernet1/0/17
- switchport trunk allowed vlan 10,30
  switchport mode trunk
  channel-group 3 mode on
  spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/18
- switchport trunk allowed vlan 10,30
  switchport mode trunk
  channel-group 3 mode on
  spanning-tree portfast trunk
 !
 interface GigabitEthernet1/0/19
- switchport trunk allowed vlan 14,34
  switchport mode trunk
  channel-group 4 mode on
 !
 interface GigabitEthernet1/0/20
- switchport trunk allowed vlan 14,34
  switchport mode trunk
  channel-group 4 mode on
 !
 interface GigabitEthernet1/0/21
- switchport trunk allowed vlan 17,37
  switchport mode trunk
  channel-group 7 mode on
 !
 interface GigabitEthernet1/0/22
- switchport trunk allowed vlan 17,37
  switchport mode trunk
  channel-group 7 mode on
 !
@@ -343,7 +339,7 @@ interface Vlan10
 !
 interface Vlan20
  ip address 172.1.20.254 255.255.255.0
- ip helper-address 172.1.10.254
+ ip helper-address 172.1.10.253
  ipv6 enable
  glbp 10 ip 172.1.20.1
  glbp 10 timers msec 500 2

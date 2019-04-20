@@ -70,20 +70,6 @@ crypto pki trustpoint TP-self-signed-1310226334
 !
 !
 !
-license boot level ipservicesk9
-diagnostic bootup level minimal
-!
-spanning-tree mode mst
-spanning-tree extend system-id
-!
-spanning-tree mst configuration
- name HeadOffice
- revision 4
- instance 1 vlan 10,20,30,40,50,90
-!
-spanning-tree mst 1 root secondary
-!
-!
 !
 redundancy
  mode sso
@@ -168,7 +154,7 @@ policy-map system-cpp-policy
 !
 !
 interface Port-channel1
- description Connection to H
+ description Connection to HO-CLUSTER-L3SW1
  no switchport
  ip address 172.1.8.26 255.255.255.252
 !
