@@ -1,6 +1,6 @@
-Current configuration : 4648 bytes
+Current configuration : 5511 bytes
 !
-! Last configuration change at 13:51:13 UTC Tue Mar 2 1993
+! Last configuration change at 14:22:08 UTC Tue Mar 2 1993 by jhammond1
 !
 version 15.0
 no service pad
@@ -15,7 +15,7 @@ boot-end-marker
 !
 enable secret 5 $1$lPWu$4KNwo.U6oI3gSEf.x/UgW.
 !
-username LocalAdmin privilege 15 secret 5 $1$mY3b$ZOcjMxqTc1r/XhLJOPGyl1
+username LocalAdmin privilege 15 secret 5 $1$5ImJ$wvvC6Ws8YSeLL3Y.gRRth0
 aaa new-model
 !
 !
@@ -23,6 +23,44 @@ aaa group server radius GEC_RAD
  server-private 172.1.10.252 auth-port 1812 acct-port 1813 key RootIT2019_RADIUS
  ip radius source-interface Vlan30
 !
+aaa authentication banner ^
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@',.,,,,'@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@,,,,,,,,,,,,@@@@@@@@@@@@@
+@@@@@@@@@@@@,:,,,,,,,,,,,,@@@@@@@@@@@@
+@@@@@@@@@@@@;,,,,,,,,,,,,,@@@@@@@@@@@@
+@@@@@@@@@@@@@,,,,,,,,,,,,@@@@@@@@@@@@@
+@@@@@@@@@@@@@#,,,,,,,,,,,@@@@@@@@@@@@@
+@@@@@@@@@@@@@@.,,,,,,,,,@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@,,,,,,,,;@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@:,,,,,,,@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@,,,,,,'@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@'.;'.,@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@##';+#@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@##+;:`.#@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@+'';',;'@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@'+'''+''@@@@@@@@@@@@@@@
+@@@@###########''';+';'@##########@@@@
+@@@@.,,,,,,,,,;'+++''';@,,,,,,,,,,@@@@
+@@@@,,,,,,,,,,,#+++'+';@,,,,,,,,,,@@@@
+@@@@,,,,,,,,,,,@#++'''@,,,,,,,,,,,@@@@
+@@@@;,,,,,,,,,,,#@+'#@,,,,,,,,,,,,@@@@
+@@@@@,,,,,,,,,,,@@@@@@,,,,,,,,,,,.@@@@
+@@@@@,,,,,,,,,,;@@@@@@@,,,,,,,,,,'@@@@
+@@@@@;,,,,,,,,,@@@@@@@@+,,,,,,,,,@@@@@
+@@@@@@,,,,,,,,#@@@@@@@@@.,,,,,,,;@@@@@
+@@@@@@+,,,,,,,@@@@@@@@@@@,,,,,,,@@@@@@
+@@@@@@@,,,,,,@@@@@@@@@@@@;,,,,,@@@@@@@
+@@@@@@@@,,,,'@@@@@@@@@@@@@,,,,@@@@@@@@
+@@@@@@@@@',.@@@@@@@@@@@@@@@,.@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@'@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-----------------------------------------------------------------------------------------------------------------------------
+THIS IS A SECURE SYSTEM. ACCESS RESTRICTED TO AUTHORIZED USERS ONLY. UNAUTHORIZED USERS ARE FORBIDDEN AND WILL BE PROSECUTED.
+All configurations are property Glowing Earth corp.
+-----------------------------------------------------------------------------------------------------------------------------
+^
 aaa authentication login default group GEC_RAD local
 aaa authentication login console group GEC_RAD local
 aaa authorization console
@@ -40,7 +78,6 @@ system mtu routing 1500
 no ip domain-lookup
 ip domain-name glowinearth.org
 ip host glowingearth.org 172.1.10.252
-!
 !
 !
 !
@@ -68,11 +105,13 @@ ip ssh version 2
 !
 interface Port-channel2
  description Connection to HO-CLUSTER-L3SW1 (F0/13-14)
+ switchport trunk allowed vlan 10,20,30,40,50,90
  switchport mode trunk
  spanning-tree portfast trunk
 !
 interface Port-channel3
  description Connection to HO-L3-SW2 (F0/15-16)
+ switchport trunk allowed vlan 10,20,30,40,50,90
  switchport mode trunk
  spanning-tree portfast trunk
 !
@@ -121,18 +160,22 @@ interface FastEthernet0/12
  shutdown
 !
 interface FastEthernet0/13
+ switchport trunk allowed vlan 10,20,30,40,50,90
  switchport mode trunk
  channel-group 2 mode on
 !
 interface FastEthernet0/14
+ switchport trunk allowed vlan 10,20,30,40,50,90
  switchport mode trunk
  channel-group 2 mode on
 !
 interface FastEthernet0/15
+ switchport trunk allowed vlan 10,20,30,40,50,90
  switchport mode trunk
  channel-group 3 mode on
 !
 interface FastEthernet0/16
+ switchport trunk allowed vlan 10,20,30,40,50,90
  switchport mode trunk
  channel-group 3 mode on
 !
@@ -179,6 +222,9 @@ radius-server directed-request
 !
 !
 !
+banner exec ^C
+YOU ARE CONNECTED TOO $(hostname)@$(domain) ON LINE $(line)($(line-desc))
+^C
 !
 line con 0
 line vty 0 4
