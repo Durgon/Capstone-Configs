@@ -1,11 +1,11 @@
 !
 crypto ikev2 proposal RootIT_ikev_prop
- encryption aes-cbc-256
+ encryption aes-cbc-256g
  integrity sha512
- group 14
+ group 16
 !
 crypto ikev2 policy RootIT_ikev_pol
- proposal prop_ikev2a
+ proposal RootIT_ikev_prop
 !
 crypto ikev2 keyring RootIT_DMVPN_keyring
  peer dmvpnv4
@@ -18,13 +18,13 @@ crypto ikev2 keyring RootIT_DMVPN_keyringv6
   address ::/0
   pre-shared-key RootIT2019_DMVPN_v6
 !
-crypto ikev2 profile pro_ikev2
+crypto ikev2 profile RootIT_pro_ikev2
  match identity remote address 0.0.0.0
  authentication remote pre-share
  authentication local pre-share
  keyring local RootIT_DMVPN_keyring
 !
-crypto ikev2 profile pro_ikev2v6
+crypto ikev2 profile RootIT_pro_ikev2v6
  match identity remote address ::/0
  authentication remote pre-share
  authentication local pre-share
@@ -33,9 +33,9 @@ crypto ikev2 profile pro_ikev2v6
 !ikev2 dead peer detection
 crypto ikev2 dpd 10 2 periodic
 !
-crypto ipsec transform-set dmvpn_set esp-aes 256 esp-sha-hmac
+crypto ipsec transform-set RootIT_dmvpn_set esp-aes 256 esp-sha-hmac
  mode tunnel
 !
-crypto ipsec profile IPSEC_profile
- set transform-set dmvpn_set
- set ikev2-profile pro_ikev2
+crypto ipsec profile RootIT_pro_IPSECv4
+ set transform-set RootIT_dmvpn_set
+ set ikev2-profile RootIT_pro_ikev2
