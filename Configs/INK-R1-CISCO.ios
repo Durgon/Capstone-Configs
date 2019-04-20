@@ -142,6 +142,7 @@ interface GigabitEthernet0/0/0
  description Connection to Local LAN
  no shutdown
  ip address 172.4.8.13 255.255.255.252
+ ipv6 address FE80::1 link-local
  ip ospf message-digest-key 1 md5 RootIT2019_OSPF
  negotiation auto
 !
@@ -149,12 +150,14 @@ interface GigabitEthernet0/0/1
  description Connection to HP Router
  no shutdown
  ip address 172.4.8.9 255.255.255.252
+ ipv6 address FE80::1 link-local
  negotiation auto
 !
 interface GigabitEthernet0/1/0
  description Connection to INK-SONICWALL
  no shutdown
  ip address 172.4.8.2 255.255.255.252
+ ipv6 address FE80::1 link-local
  negotiation auto
 !
 interface GigabitEthernet0/1/1

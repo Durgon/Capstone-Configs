@@ -105,7 +105,7 @@ crypto ipsec profile RootIT2019
 interface Tunnel0
  ip address 10.10.10.7 255.255.255.0
  ipv6 address 524f:4f54:4954:10::3/64
- ipv6 address FE80::1010 link-local
+ ipv6 address FE80::1011 link-local
  bandwidth 1000000
  no ip redirects
  ip mtu 1400
@@ -113,15 +113,18 @@ interface Tunnel0
  ip nhrp authentication Root2019
  ipv6 nhrp authentication Root2019
  ip nhrp map 10.10.10.1 10.101.201.239
+ ipv6 nhrp map 524f:4f54:4954:10::1 10.10.10.1
  ip nhrp map multicast 10.101.201.239
+ ipv6 nhrp map multicast 10.10.10.1
  ip nhrp network-id 4
  ipv6 nhrp network-id 6
  ip nhrp nhs 10.10.10.1
+ ipv6 nhrp nhs 524f:4f54:4954:10::1
  ip nhrp holdtime 300
  ipv6 nhrp holdtime 300
- ip summary-address eigrp 1 172.7.0.0 255.255.0.0
- ip authentication key-chain eigrp 1 AuthenticatedEIGRP
- ip authentication mode eigrp 1 md5
+ ip summary-address eigrp 4 172.7.0.0 255.255.0.0
+ ip authentication key-chain eigrp 4 AuthenticatedEIGRP
+ ip authentication mode eigrp 4 md5
  ip tcp adjust-mss 1360
  tunnel source GigabitEthernet0/2
  tunnel mode gre multipoint
@@ -135,6 +138,7 @@ interface Embedded-Service-Engine0/0
 interface GigabitEthernet0/0
  description LAN Connection
  ip address 172.7.8.1 255.255.255.252
+ ipv6 address FE80::1 link-local
  ip ospf authentication message-digest
  ip ospf message-digest-key 1 md5 RootIT2019_OSPF
  ip ospf priority 254
@@ -166,7 +170,7 @@ interface FastEthernet0/0/1
  speed auto
 !
 !
-router eigrp 1
+router eigrp 4
  default-metric 10000 100 255 1 1500
  network 10.10.10.0 0.0.0.255
  redistribute ospf 1
@@ -178,13 +182,16 @@ router ospf 1
  default-information originate
 !
 ip forward-protocol nd
-!
 no ip http server
 no ip http secure-server
 !
 !
+ip ssh version 2
 !
-route-map TEST permit 10
+ip access-list standard SITE_SSH_ACCESS
+ remark Site Management network can access only site devices, while HO Management network can access all devices
+ permit 172.7.30.0 0.0.0.255
+ permit 172.1.30.0 0.0.0.255
 !
 !
 !
@@ -219,7 +226,7 @@ mgcp profile default
 gatekeeper
  shutdown
 !
-banner login ^CC
+banner login ^C
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @@@@@@@@@@@@@@@',.,,,,'@@@@@@@@@@@@@@@
@@ -266,10 +273,10 @@ line con 0
  stopbits 1
 line aux 0
 line vty 0 4
- access-class HO_SSH_ACCESS in
+ access-class SITE_SSH_ACCESS  in
  login local
 line vty 5 15
- access-class HO_SSH_ACCESS in
+ access-class SITE_SSH_ACCESS in
  login local
 !
 !
