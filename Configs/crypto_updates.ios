@@ -10,13 +10,13 @@ crypto ikev2 policy RootIT_ikev_pol
 crypto ikev2 keyring RootIT_DMVPN_keyring
  peer dmvpnv4
   address 0.0.0.0 0.0.0.0
-  pre-shared-key RootIT2019_DMVPN_v4
+  pre-shared-key RootIT$_DMVPN_v4
 !
 !
 crypto ikev2 keyring RootIT_DMVPN_keyringv6
  peer dmvpnv6
   address ::/0
-  pre-shared-key RootIT2019_DMVPN_v6
+  pre-shared-key RootIT$_DMVPN_v6
 !
 crypto ikev2 profile RootIT_pro_ikev2
  match identity remote address 0.0.0.0
@@ -33,9 +33,9 @@ crypto ikev2 profile RootIT_pro_ikev2v6
 !ikev2 dead peer detection
 crypto ikev2 dpd 10 2 periodic
 !
-crypto ipsec transform-set RootIT_dmvpn_set esp-aes 256 esp-sha-hmac
+crypto ipsec transform-set RootIT_TSET esp-aes 256 esp-sha-hmac
  mode tunnel
 !
 crypto ipsec profile RootIT_pro_IPSECv4
- set transform-set RootIT_dmvpn_set
+ set transform-set RootIT_TSET
  set ikev2-profile RootIT_pro_ikev2

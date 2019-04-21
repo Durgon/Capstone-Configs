@@ -120,32 +120,23 @@ crypto ipsec profile RootIT2019
 !
 interface Tunnel0
  ip address 10.10.10.1 255.255.255.0
- ipv6 address 524f:4f54:4954:10::1/64
- ipv6 address FE80::1010 link-local
  bandwidth 1000000
  no ip redirects
  ip mtu 1400
  ipv6 mtu 1400
- no ip next-hop-self eigrp 1
- no ip split-horizon eigrp 1
+ no ip next-hop-self eigrp 4
+ no ip split-horizon eigrp 4
  ip nhrp authentication Root2019
- ipv6 nhrp authentication Root2019
  ip nhrp network-id 4
- ipv6 nhrp network-id 6
  ip nhrp map multicast dynamic
- ipv6 nhrp map multicast dynamic
  ip nhrp redirect
- ipv6 nhrp redirect
  ip nhrp shortcut
- ipv6 nhrp shortcut
  ip nhrp holdtime 300
- ipv6 nhrp holdtime 300
  ip nhrp registration timeout 30
- ipv6 nhrp registration timeout 30
  ip tcp adjust-mss 1360
  ip summary-address eigrp 1 172.1.0.0 255.255.0.0
- ip authentication key-chain eigrp 1 AuthenticatedEIGRP
- ip authentication mode eigrp 1 md5
+ ip authentication key-chain eigrp 4 AuthenticatedEIGRP
+ ip authentication mode eigrp 4 md5
  tunnel source GigabitEthernet0/1/0
  tunnel mode gre multipoint
  tunnel key 1

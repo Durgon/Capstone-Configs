@@ -1,0 +1,19 @@
+1)Configured RADIUS authentication for network devices at HO & other sites
+2)Password for LocalAdmin account on all devices: RootIT2019$
+3)Original working crypto config from HeadOffice
+crypto isakmp policy 1
+ encr aes
+ authentication pre-share
+ group 5
+crypto isakmp key RootIT2019-key address 0.0.0.0
+!
+!
+crypto ipsec transform-set t-set esp-aes esp-sha-hmac
+ mode tunnel
+!
+crypto ipsec profile RootIT2019
+set transform-set t-set
+  -turns out error 256 is mismatched encryption....so i missed something somewhere up there
+  -double check that they're right on both ends...tested crypto_updates.ios commands...worked fine
+  -make sure transform sets are in TUNNEL MODE....this was wrong in the documents
+4)UPDATE GHUB WITH RUNNING CONFIGS FOR JORDAN
