@@ -1,8 +1,8 @@
 !
 crypto ikev2 proposal RootIT_ikev_prop
- encryption aes-cbc-256g
- integrity sha512
- group 16
+ encryption aes-cbc-256
+ integrity sha256
+ group 14
 !
 crypto ikev2 policy RootIT_ikev_pol
  proposal RootIT_ikev_prop
