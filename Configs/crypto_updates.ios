@@ -28,7 +28,7 @@ crypto ikev2 profile RootIT_pro_ikev2v6
  match identity remote address ::/0
  authentication remote pre-share
  authentication local pre-share
- keyring local RootIT2019_DMVPN_v6
+ keyring local RootIT_DMVPN_keyringv6
 !
 !ikev2 dead peer detection
 crypto ikev2 dpd 10 2 periodic

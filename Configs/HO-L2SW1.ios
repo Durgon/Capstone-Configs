@@ -222,9 +222,9 @@ radius-server directed-request
 !
 !
 !
-banner exec ^C
+banner exec ^
 YOU ARE CONNECTED TOO $(hostname)@$(domain) ON LINE $(line)($(line-desc))
-^C
+^
 !
 line con 0
 line vty 0 4

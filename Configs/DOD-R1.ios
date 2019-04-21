@@ -1,7 +1,3 @@
-Current configuration : 2901 bytes
-!
-! Last configuration change at 17:25:18 UTC Tue Apr 2 2019
-!
 version 15.5
 service timestamps debug datetime msec
 service timestamps log datetime msec
@@ -28,11 +24,9 @@ memory-size iomem 10
 !
 !
 !
-ip name-server 172.1.10.252 172.1.10.253
 !
 no ip domain lookup
 ip domain name glowingearth.org
-!
 ip cef
 no ipv6 cef
 !
@@ -46,11 +40,10 @@ multilink bundle-name authenticated
 key chain AuthenticatedOSPF
  key 1
   key-string RootIT2019_OSPF
-!
 key chain AuthenticatedEIGRP
-  description Key for authenticated EIGRP
-  key 1
-    key-string RootIT2019_EIGRP
+ key 1
+  key-string RootIT2019_EIGRP
+!
 !
 voice-card 0
 !
@@ -74,28 +67,18 @@ redundancy
 !
 !
 !
-crypto identity DOD_Spoke
 !
-crypto keyring DMVPN_KEY
-  pre-shared-key address 0.0.0.0 0.0.0.0 key RootIT2019_DMVPN
 !
-crypto isakmp policy 1
- encr aes
+crypto isakmp policy 10
  authentication pre-share
- group 5
+crypto isakmp key RootIT$_DMVPN address 0.0.0.0
 !
-crypto isakmp profile DMVPN
-  keyring DMVPN_KEY
-  match identity address 0.0.0.0
 !
-crypto ipsec transform-set t-set esp-aes 256 esp-sha256-hmac
- mode transport
+crypto ipsec transform-set RootIT_TSET esp-3des esp-md5-hmac
+ mode tunnel
 !
-crypto ipsec profile RootIT2019
- set transform-set t-set
- set identity DOD_Spoke
- group 14
-!
+crypto ipsec profile RootIT_IPSEC_profile
+ set transform-set RootIT_TSET
 !
 !
 !
@@ -103,33 +86,23 @@ crypto ipsec profile RootIT2019
 !
 !
 interface Tunnel0
+ bandwidth 100000
  ip address 10.10.10.7 255.255.255.0
- ipv6 address 524f:4f54:4954:10::3/64
- ipv6 address FE80::1011 link-local
- bandwidth 1000000
  no ip redirects
  ip mtu 1400
- ipv6 mtu 1400
- ip nhrp authentication Root2019
- ipv6 nhrp authentication Root2019
- ip nhrp map 10.10.10.1 10.101.201.239
- ipv6 nhrp map 524f:4f54:4954:10::1 10.10.10.1
- ip nhrp map multicast 10.101.201.239
- ipv6 nhrp map multicast 10.10.10.1
- ip nhrp network-id 4
- ipv6 nhrp network-id 6
- ip nhrp nhs 10.10.10.1
- ipv6 nhrp nhs 524f:4f54:4954:10::1
- ip nhrp holdtime 300
- ipv6 nhrp holdtime 300
- ip summary-address eigrp 4 172.7.0.0 255.255.0.0
- ip authentication key-chain eigrp 4 AuthenticatedEIGRP
  ip authentication mode eigrp 4 md5
+ ip authentication key-chain eigrp 4 AuthenticatedEIGRP
+ ip nhrp authentication RootIT$
+ ip nhrp map 10.10.10.1 10.101.201.239
+ ip nhrp map multicast 10.101.201.239
+ ip nhrp network-id 1
+ ip nhrp holdtime 300
+ ip nhrp nhs 10.10.10.1
+ ip summary-address eigrp 4 172.7.0.0 255.255.0.0
  ip tcp adjust-mss 1360
  tunnel source GigabitEthernet0/2
  tunnel mode gre multipoint
  tunnel key 1
- tunnel protection ipsec profile RootIT2019
 !
 interface Embedded-Service-Engine0/0
  no ip address
@@ -138,12 +111,12 @@ interface Embedded-Service-Engine0/0
 interface GigabitEthernet0/0
  description LAN Connection
  ip address 172.7.8.1 255.255.255.252
- ipv6 address FE80::1 link-local
  ip ospf authentication message-digest
  ip ospf message-digest-key 1 md5 RootIT2019_OSPF
  ip ospf priority 254
  duplex auto
  speed auto
+ ipv6 address FE80::1 link-local
 !
 interface GigabitEthernet0/1
  no ip address
@@ -174,24 +147,24 @@ router eigrp 4
  default-metric 10000 100 255 1 1500
  network 10.10.10.0 0.0.0.255
  redistribute ospf 1
+ passive-interface GigabitEthernet0/2
 !
 router ospf 1
  router-id 1.1.1.1
- redistribute eigrp 1 metric 100 subnets
+ redistribute eigrp 4 metric 100 subnets
  network 172.7.8.0 0.0.0.3 area 0
  default-information originate
 !
 ip forward-protocol nd
+!
 no ip http server
 no ip http secure-server
 !
+ip route 0.0.0.0 0.0.0.0 Tunnel0
 !
-ip ssh version 2
+ip access-list extended DODE-LOCALNETS
+ permit ip 172.7.0.0 0.0.255.255 any
 !
-ip access-list standard SITE_SSH_ACCESS
- remark Site Management network can access only site devices, while HO Management network can access all devices
- permit 172.7.30.0 0.0.0.255
- permit 172.1.30.0 0.0.0.255
 !
 !
 !
@@ -226,59 +199,21 @@ mgcp profile default
 gatekeeper
  shutdown
 !
-banner login ^C
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@',.,,,,'@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@,,,,,,,,,,,,@@@@@@@@@@@@@
-@@@@@@@@@@@@,:,,,,,,,,,,,,@@@@@@@@@@@@
-@@@@@@@@@@@@;,,,,,,,,,,,,,@@@@@@@@@@@@
-@@@@@@@@@@@@@,,,,,,,,,,,,@@@@@@@@@@@@@
-@@@@@@@@@@@@@#,,,,,,,,,,,@@@@@@@@@@@@@
-@@@@@@@@@@@@@@.,,,,,,,,,@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@,,,,,,,,;@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@:,,,,,,,@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@@,,,,,,'@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@@'.;'.,@@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@@##';+#@@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@##+;:`.#@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@+'';',;'@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@'+'''+''@@@@@@@@@@@@@@@
-@@@@###########''';+';'@##########@@@@
-@@@@.,,,,,,,,,;'+++''';@,,,,,,,,,,@@@@
-@@@@,,,,,,,,,,,#+++'+';@,,,,,,,,,,@@@@
-@@@@,,,,,,,,,,,@#++'''@,,,,,,,,,,,@@@@
-@@@@;,,,,,,,,,,,#@+'#@,,,,,,,,,,,,@@@@
-@@@@@,,,,,,,,,,,@@@@@@,,,,,,,,,,,.@@@@
-@@@@@,,,,,,,,,,;@@@@@@@,,,,,,,,,,'@@@@
-@@@@@;,,,,,,,,,@@@@@@@@+,,,,,,,,,@@@@@
-@@@@@@,,,,,,,,#@@@@@@@@@.,,,,,,,;@@@@@
-@@@@@@+,,,,,,,@@@@@@@@@@@,,,,,,,@@@@@@
-@@@@@@@,,,,,,@@@@@@@@@@@@;,,,,,@@@@@@@
-@@@@@@@@,,,,'@@@@@@@@@@@@@,,,,@@@@@@@@
-@@@@@@@@@',.@@@@@@@@@@@@@@@,.@@@@@@@@@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@'@@@@@@@@@@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
------------------------------------------------------------------------------------------------------------------------------
-YOU ARE CONNECTING TOO $(hostname)@$(domain) ON LINE $(line)($(line-desc))
-THIS IS A SECURE SYSTEM. ACCESS RESTRICTED TO AUTHORIZED USERS ONLY. UNAUTHORIZED USERS ARE FORBIDDEN AND WILL BE PROSECUTED.
-All configurations are property Glowing Earth corp.
------------------------------------------------------------------------------------------------------------------------------
-^C
 !
  vstack
 !
 line con 0
  logging synchronous
- stopbits 1
 line aux 0
+line 2
+ no activation-character
+ no exec
+ transport preferred none
+ transport output pad telnet rlogin lapb-ta mop udptn v120 ssh
+ stopbits 1
 line vty 0 4
- access-class SITE_SSH_ACCESS  in
- login local
-line vty 5 15
- access-class SITE_SSH_ACCESS in
- login local
-!
+ login
+ transport input none
 !
 scheduler allocate 20000 1000
 !

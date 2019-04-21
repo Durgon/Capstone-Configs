@@ -121,15 +121,13 @@ crypto ipsec profile RootIT2019
 interface Tunnel0
  ip address 10.10.10.1 255.255.255.0
  ipv6 address 524f:4f54:4954:10::1/64
- ipv6 address FE80::2010 link-local
+ ipv6 address FE80::1010 link-local
  bandwidth 1000000
  no ip redirects
  ip mtu 1400
  ipv6 mtu 1400
- no ip next-hop-self eigrp 4
- no ipv6 next-hop-self eigrp 6
- no ip split-horizon eigrp 4
- no ipv6 split-horizon eigrp 6
+ no ip next-hop-self eigrp 1
+ no ip split-horizon eigrp 1
  ip nhrp authentication Root2019
  ipv6 nhrp authentication Root2019
  ip nhrp network-id 4
@@ -145,9 +143,9 @@ interface Tunnel0
  ip nhrp registration timeout 30
  ipv6 nhrp registration timeout 30
  ip tcp adjust-mss 1360
- ip summary-address eigrp 4 172.1.0.0 255.255.0.0
- ip authentication key-chain eigrp 4 AuthenticatedEIGRP
- ip authentication mode eigrp 4 md5
+ ip summary-address eigrp 1 172.1.0.0 255.255.0.0
+ ip authentication key-chain eigrp 1 AuthenticatedEIGRP
+ ip authentication mode eigrp 1 md5
  tunnel source GigabitEthernet0/1/0
  tunnel mode gre multipoint
  tunnel key 1
@@ -156,23 +154,17 @@ interface Tunnel0
 interface GigabitEthernet0/0/0
  description Connection to HO-CLUSTER-L3SW1
  ip address 172.1.8.9 255.255.255.252
- ipv6 address 524f:4f54:4954:1:8::9/126
- ipv6 address FE80::2 link-local
  ip ospf authentication key-chain AuthenticatedOSPF
  negotiation auto
 !
 interface GigabitEthernet0/0/1
  description Connection to HO-L3SW2
  ip address 172.1.8.17 255.255.255.252
- ipv6 address 524f:4f54:4954:1:8::17/126
- ipv6 address FE80::2 link-local
  negotiation auto
 !
 interface GigabitEthernet0/1/0
  description Connection to ASA Firewall
  ip address 172.1.8.2 255.255.255.252
- ipv6 address 524f:4f54:4954:1:8::2/126
- ipv6 address FE80::2 link-local
  ip ospf authentication key-chain AuthenticatedOSPF
  negotiation auto
 !
@@ -192,7 +184,7 @@ interface Vlan1
  shutdown
 !
 !
-router eigrp 4
+router eigrp 1
  default-metric 10000 100 255 1 1500
  network 10.10.10.0 0.0.0.255
  redistribute ospf 1
@@ -235,7 +227,7 @@ ipv6 access-list preauth_v6
 !
 control-plane
 !
-banner login ^C
+banner login ^
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @@@@@@@@@@@@@@@',.,,,,'@@@@@@@@@@@@@@@
@@ -269,11 +261,11 @@ banner login ^C
 @@@@@@@@@@@@@@@@@@@@@@@@@@@'@@@@@@@@@@
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -----------------------------------------------------------------------------------------------------------------------------
-YOU ARE CONNECTED TOO $(hostname)@$(domain) ON LINE $(line)($(line-desc))
+YOU ARE CONNECTING TOO $(hostname)@$(domain) ON LINE $(line)($(line-desc))
 THIS IS A SECURE SYSTEM. ACCESS RESTRICTED TO AUTHORIZED USERS ONLY. UNAUTHORIZED USERS ARE FORBIDDEN AND WILL BE PROSECUTED.
 All configurations are property Glowing Earth corp.
 -----------------------------------------------------------------------------------------------------------------------------
-^C
+^
 !
 line con 0
  logging synchronous
