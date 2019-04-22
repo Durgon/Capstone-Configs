@@ -34,8 +34,12 @@ crypto ikev2 profile RootIT_pro_ikev2v6
 crypto ikev2 dpd 10 2 periodic
 !
 crypto ipsec transform-set RootIT_TSET esp-aes 256 esp-sha-hmac
- mode tunnel
+ mode transport
 !
 crypto ipsec profile RootIT_pro_IPSECv4
  set transform-set RootIT_TSET
  set ikev2-profile RootIT_pro_ikev2
+
+crypto ipsec profile RootIT_pro_IPSECv6
+ set transform-set RootIT_TSET
+ set ikev2-profile RootIT_pro_ikev2v6
