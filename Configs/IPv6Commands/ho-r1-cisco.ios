@@ -1,0 +1,89 @@
+ipv6 unicast-routing
+!
+key chain AuthenticatedEIGRP
+ description Key for authenticated EIGRP
+ key 1
+  key-string RootIT2019_EIGRP
+key chain AuthenticatedOSPF
+ description MD5 Key for authenticated OSPF
+ key 1
+  key-string RootIT2019_OSPF
+   cryptographic-algorithm md5
+!
+archive
+ path tftp://172.1.10.240/Config_Backup/$h-$t.ios
+!
+crypto ikev2 proposal RootIT_ikev_prop
+ encryption aes-cbc-256
+ integrity sha256
+ group 14
+!
+crypto ikev2 policy RootIT_ikev_pol
+ proposal RootIT_ikev_prop
+!
+crypto ikev2 keyring RootIT_DMVPN_keyring
+ peer dmvpnv4
+  address 0.0.0.0 0.0.0.0
+  pre-shared-key RootIT$_DMVPN_v4
+ !
+crypto ikev2 keyring RootIT_DMVPN_keyringv6
+ peer dmvpnv6
+  address ::/0
+  pre-shared-key RootIT$_DMVPN_v6
+!
+!
+crypto ikev2 profile RootIT_pro_ikev2v6
+ match identity remote address ::/0
+ authentication remote pre-share
+ authentication local pre-share
+ keyring local RootIT_DMVPN_keyringv6
+!
+interface Tunnel6
+ ipv6 enable
+ ipv6 address 524f:4f54:4954:10::1/64
+ ipv6 address FE80::1010 link-local
+ ipv6 eigrp 6
+ no ipv6 next-hop-self eigrp 6
+ no ipv6 split-horizon eigrp 6
+ ipv6 nhrp authentication RootIT$
+ ipv6 nhrp network-id 6
+ ipv6 nhrp map multicast dynamic
+ ipv6 nhrp redirect
+ ipv6 nhrp shortcut
+ ipv6 nhrp holdtime 300
+ ipv6 nhrp registration timeout 30
+ tunnel source Loopback6
+ tunnel mode gre multipoint
+ tunnel key 6
+!
+interface GigabitEthernet0/0/0
+ ipv6 enable
+ ipv6 address FE80::2 link-local
+ ipv6 address 524F:4F54:4954:18::9/126
+!
+interface GigabitEthernet0/0/1
+ ipv6 enable
+ ipv6 address FE80::2 link-local
+ ipv6 address 524F:4F54:4954:18::17/126
+!
+interface GigabitEthernet0/1/0
+ ipv6 enable
+ ipv6 address FE80::2 link-local
+ ipv6 address 524F:4F54:4954:18::2/126
+!
+!
+interface GigabitEthernet0
+ ipv6 enable
+ ipv6 address FE80::2 link-local
+ ipv6 address 524F:4F54:4954:130::252/64
+!
+interface Loopback6
+ no ip address
+ ipv6 address FE80::2 link-local 
+ ipv6 address 524F:4F54:4954:18
+!
+ipv6 router ospf 1
+ passive-interface default
+ no passive-interface g0
+ log-adjacency-changes
+!
