@@ -129,9 +129,9 @@ interface Tunnel0
  ip nhrp nhs 10.10.10.1
  ip nhrp shortcut
  ip nhrp holdtime 300
- ip summary-address eigrp 1 172.4.0.0 255.255.0.0
- ip authentication key-chain eigrp 1 AuthenticatedEIGRP
- ip authentication mode eigrp 1 md5
+ ip summary-address eigrp 4 172.4.0.0 255.255.0.0
+ ip authentication key-chain eigrp 4 AuthenticatedEIGRP
+ ip authentication mode eigrp 4 md5
  ip tcp adjust-mss 1360
  tunnel source GigabitEthernet0/1/0
  tunnel mode gre multipoint
@@ -172,7 +172,7 @@ interface GigabitEthernet0
  negotiation auto
 !
 !
-router eigrp 1
+router eigrp 4
  default-metric 10000 100 255 1 1500
  network 10.10.10.0 0.0.0.255
  redistribute ospf 1
