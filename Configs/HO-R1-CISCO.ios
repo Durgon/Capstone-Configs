@@ -1,3 +1,7 @@
+Current configuration : 9335 bytes
+!
+! Last configuration change at 02:08:55 UTC Mon Apr 22 2019 by jhammond1
+!
 version 16.3
 service timestamps debug datetime msec
 service timestamps log datetime msec
@@ -17,208 +21,16 @@ vrf definition Mgmt-intf
  address-family ipv6
  exit-address-family
 !
+enable secret 5 $1$P2JG$HJVRtPJQM6j7CYFyMLYg21
 !
-no aaa new-model
+aaa new-model
 !
 !
+aaa group server radius GEC_RAD
+ server-private 172.1.10.252 auth-port 1812 acct-port 1813 key RootIT2019_RADIUS
+ ip radius source-interface GigabitEthernet0
 !
-ip name-server 172.1.10.252 172.1.10.253
-!
-no ip domain lookup
-ip domain name glowingearth.org
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-subscriber templating
-vtp domain cisco
-vtp mode transparent
-!
-!
-!
-multilink bundle-name authenticated
-!
-!
-key chain AuthenticatedOSPF
- description MD5 Key for authenticated OSPF
- key 1
-  key-string RootIT2019_OSPF
-   cryptographic-algorithm md5
-!
-key chain AuthenticatedEIGRP
-  description Key for authenticated EIGRP
-  key 1
-    key-string RootIT2019_EIGRP
-!
-!
-crypto pki trustpoint TP-self-signed-2401077705
- enrollment selfsigned
- subject-name cn=IOS-Self-Signed-Certificate-2401077705
- revocation-check none
- rsakeypair TP-self-signed-2401077705
-!
-!
-!
-diagnostic bootup level minimal
-spanning-tree extend system-id
-!
-username LocalAdmin privilege 15 secret 5 $1$bsd0$FOADGU66lGEi58Y6gK3D41
-!
-redundancy
- mode none
-!
-!
-!
-!
-!
-vlan internal allocation policy ascending
-!
-!
-!
-!
-!
-crypto identity HO_Hub
-!
-crypto keyring DMVPN_KEY
-  pre-shared-key address 0.0.0.0 0.0.0.0 key RootIT2019_DMVPN
-!
-crypto isakmp policy 1
- encr aes
- authentication pre-share
- group 5
-!
-crypto isakmp profile DMVPN
-  keyring DMVPN_KEY
-  match identity address 0.0.0.0
-!
-crypto ipsec transform-set t-set esp-aes 256 esp-sha256-hmac
- mode transport
-!
-crypto ipsec profile RootIT2019
- set transform-set t-set
- set identity HO_Hub
- group 14
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-interface Tunnel0
- ip address 10.10.10.1 255.255.255.0
- bandwidth 1000000
- no ip redirects
- ip mtu 1400
- ipv6 mtu 1400
- no ip next-hop-self eigrp 4
- no ip split-horizon eigrp 4
- ip nhrp authentication Root2019
- ip nhrp network-id 4
- ip nhrp map multicast dynamic
- ip nhrp redirect
- ip nhrp shortcut
- ip nhrp holdtime 300
- ip nhrp registration timeout 30
- ip tcp adjust-mss 1360
- ip summary-address eigrp 1 172.1.0.0 255.255.0.0
- ip authentication key-chain eigrp 4 AuthenticatedEIGRP
- ip authentication mode eigrp 4 md5
- tunnel source GigabitEthernet0/1/0
- tunnel mode gre multipoint
- tunnel key 1
- tunnel protection ipsec profile RootIT2019
-!
-interface GigabitEthernet0/0/0
- description Connection to HO-CLUSTER-L3SW1
- ip address 172.1.8.9 255.255.255.252
- ip ospf authentication key-chain AuthenticatedOSPF
- negotiation auto
-!
-interface GigabitEthernet0/0/1
- description Connection to HO-L3SW2
- ip address 172.1.8.17 255.255.255.252
- negotiation auto
-!
-interface GigabitEthernet0/1/0
- description Connection to ASA Firewall
- ip address 172.1.8.2 255.255.255.252
- ip ospf authentication key-chain AuthenticatedOSPF
- negotiation auto
-!
-interface GigabitEthernet0/1/1
- no ip address
- shutdown
- negotiation auto
-!
-interface GigabitEthernet0
- vrf forwarding Mgmt-intf
- no ip address
- shutdown
- negotiation auto
-!
-interface Vlan1
- no ip address
- shutdown
-!
-!
-router eigrp 1
- default-metric 10000 100 255 1 1500
- network 10.10.10.0 0.0.0.255
- redistribute ospf 1
- no auto-summary
-!
-router ospf 1
- router-id 2.2.2.2
- redistribute eigrp 1 metric 100 subnets
- network 172.1.8.0 0.0.0.3 area 0
- network 172.1.8.8 0.0.0.3 area 0
- network 172.1.8.16 0.0.0.3 area 0
-!
-ip forward-protocol nd
-no ip http server
-no ip http secure-server
-ip tftp source-interface GigabitEthernet0
-!
-ip ssh version 2
-!
-ip access-list standard HO_SSH_ACCESS
- remark HO Management network only allowed to connect SSH into HO devices
- permit 172.1.30.0 0.0.0.255
-!
-!
-!
-!
-!
-!
-ipv6 access-list preauth_v6
- permit udp any any eq domain
- permit tcp any any eq domain
- permit icmp any any nd-ns
- permit icmp any any nd-na
- permit icmp any any router-solicitation
- permit icmp any any router-advertisement
- permit icmp any any redirect
- permit udp any eq 547 any eq 546
- permit udp any eq 546 any eq 547
- deny ipv6 any any
-!
-control-plane
-!
-banner login ^
+aaa authentication banner ^C
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @@@@@@@@@@@@@@@',.,,,,'@@@@@@@@@@@@@@@
@@ -252,23 +64,291 @@ banner login ^
 @@@@@@@@@@@@@@@@@@@@@@@@@@@'@@@@@@@@@@
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -----------------------------------------------------------------------------------------------------------------------------
-YOU ARE CONNECTING TOO $(hostname)@$(domain) ON LINE $(line)($(line-desc))
 THIS IS A SECURE SYSTEM. ACCESS RESTRICTED TO AUTHORIZED USERS ONLY. UNAUTHORIZED USERS ARE FORBIDDEN AND WILL BE PROSECUTED.
 All configurations are property Glowing Earth corp.
 -----------------------------------------------------------------------------------------------------------------------------
-^
+^C
+aaa authentication login default group GEC_RAD local
+aaa authentication login console group GEC_RAD local
+aaa authorization console
+aaa authorization exec default group GEC_RAD local
+!
+!
+!
+!
+!
+!
+aaa session-id common
+!
+!
+!
+ip name-server 172.1.10.252 172.1.10.253
+
+no ip domain lookup
+ip domain name glowingearth.org
+!
+!
+!
+ipv6 unicast-routing
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+vtp domain cisco
+vtp mode transparent
+!
+!
+!
+multilink bundle-name authenticated
+!
+!
+key chain AuthenticatedEIGRP
+ description Key for authenticated EIGRP
+ key 1
+  key-string RootIT2019_EIGRP
+key chain AuthenticatedOSPF
+ description MD5 Key for authenticated OSPF
+ key 1
+  key-string RootIT2019_OSPF
+   cryptographic-algorithm md5
+!
+!
+crypto pki trustpoint TP-self-signed-2401077705
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-2401077705
+ revocation-check none
+ rsakeypair TP-self-signed-2401077705
+!
+!
+crypto pki certificate chain TP-self-signed-2401077705
+ certificate self-signed 01
+  30820330 30820218 A0030201 02020101 300D0609 2A864886 F70D0101 05050030
+  31312F30 2D060355 04031326 494F532D 53656C66 2D536967 6E65642D 43657274
+  69666963 6174652D 32343031 30373737 3035301E 170D3139 30343138 32333538
+  30315A17 0D323030 31303130 30303030 305A3031 312F302D 06035504 03132649
+  4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D32 34303130
+  37373730 35308201 22300D06 092A8648 86F70D01 01010500 0382010F 00308201
+  0A028201 0100AD81 6929A5DE 3FDC9045 7D92EC0F 9D8EEAAB 41288A8C F37D84B7
+  A89471E3 2569C304 2EACCF3E 13E21909 41D6F876 AE4728E4 FAEC9D29 6706951A
+  F8486FA3 3C6B1554 FB9F3719 59268D95 7CF38DC4 A97AAD52 5CB10812 646E7189
+  17042B21 8B5EC1DF FB1D6E57 3EA8F681 7FD638DA EF614C21 9F47B84F AD3FC1B0
+  16F817BA 2B2738D8 3ACE0DB2 C25F2C26 2EE75AA2 BC121973 DD623CA4 E4078E83
+  869AF7F6 938F7830 73AD0C3C 13B56836 8BC9766D CC7F930F CF53C0D6 15BCD87A
+  1F89E813 A54CB2DB 72D917B0 3CEF6442 7E7D1EC0 87205BEB FA63ADFF 2A8CFFA8
+  1AE4CD11 AF40D8FA BCBD6FD8 E3D29F66 BAB2EC14 B6C52E02 6F6F36F2 B6DEF5F5
+  87AB6F33 2A6D0203 010001A3 53305130 0F060355 1D130101 FF040530 030101FF
+  301F0603 551D2304 18301680 14962634 DE3C1B7E 7758A4B4 2E6F77DF 82F4D948
+  70301D06 03551D0E 04160414 962634DE 3C1B7E77 58A4B42E 6F77DF82 F4D94870
+  300D0609 2A864886 F70D0101 05050003 82010100 854E53A5 78BA2A11 F60E624F
+  BDE451BD 97E6DA40 ED2FDC4E ABED67E5 2C417287 19F1796E 99CF5268 7C4F4210
+  683CE730 820D666E B1870E9C FE9A5700 BA29D94C F7DFE1D0 7ABA7BB7 98ED70E0
+  1AD1C792 58B3FBDE 65F46792 D899F966 DED64041 B01B86A5 D29E52B1 F0123B28
+  DDD7A38E 1FE64FCE E24830E2 C54676B3 399A6183 B1E833A1 1ACB61DA 2D043232
+  91C60B21 4C32F9D8 F7A7AC0D 43BE87DB ED331175 C8065AFC FD6BC6A9 EEBC7DEA
+  A477F253 5BEA6D30 A4E15223 92914982 E1BBEC33 5300E7D2 3CC9F1AB EA270EF5
+  F8FB80E0 E09CA2B1 4CA21D4C 474EE8F8 788CEEDF 59BCFC16 9E3A5962 576CACBB
+  F50B6BB6 7BB382AE A87B1AE8 5F84D44F A483A2DC
+  	quit
+
+
+license udi pid ISR4321/K9 sn FDO201701GU
+archive
+ path tftp://172.1.10.240/Config_Backup/$h-$t.ios
+!
+diagnostic bootup level minimal
+spanning-tree extend system-id
+!
+username LocalAdmin privilege 15 secret 5 $1$lD0p$kj4MyZu2iu.oil2n8Qjsw0
+!
+redundancy
+ mode none
+!
+crypto ikev2 proposal RootIT_ikev_prop
+ encryption aes-cbc-256
+ integrity sha256
+ group 14
+!
+crypto ikev2 policy RootIT_ikev_pol
+ proposal RootIT_ikev_prop
+!
+crypto ikev2 keyring RootIT_DMVPN_keyring
+ peer dmvpnv4
+  address 0.0.0.0 0.0.0.0
+  pre-shared-key RootIT$_DMVPN_v4
+ !
+!
+!
+crypto ikev2 profile RootIT_pro_ikev2
+ match identity remote address 0.0.0.0
+ authentication local pre-share
+ authentication remote pre-share
+ keyring local RootIT_DMVPN_keyring
+!
+crypto ikev2 dpd 10 2 periodic
+!
+!
+vlan internal allocation policy ascending
+!
+!
+!
+!
+!
+!
+!
+!
+crypto ipsec transform-set RootIT_TSET esp-aes 256 esp-sha-hmac
+ mode transport
+!
+crypto ipsec profile RootIT_pro_IPSECv4
+ set transform-set RootIT_TSET
+ set ikev2-profile RootIT_pro_ikev2
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Tunnel0
+ description RootIT-DMVPN-HUB
+ bandwidth 100000
+ ip address 10.10.10.1 255.255.255.0
+ no ip redirects
+ ip mtu 1400
+ ip authentication mode eigrp 4 md5
+ ip authentication key-chain eigrp 4 AuthenticatedEIGRP
+ no ip next-hop-self eigrp 4
+ no ip split-horizon eigrp 4
+ ip nhrp authentication RootIT$
+ ip nhrp network-id 1
+ ip nhrp holdtime 300
+ ip nhrp redirect
+ ip summary-address eigrp 4 172.1.0.0 255.255.0.0
+ ip tcp adjust-mss 1360
+ tunnel source GigabitEthernet0/1/0
+ tunnel mode gre multipoint
+ tunnel key 1
+ tunnel protection ipsec profile RootIT_pro_IPSECv4
+!
+interface Tunnel6
+ no ip address
+ ipv6 address FE80::2 link-local
+ ipv6 address 10:10:10::1/64
+!
+interface GigabitEthernet0/0/0
+ description Connection to HO-CLUSTER-L3SW1
+ ip address 172.1.8.9 255.255.255.252
+ ip ospf authentication key-chain AuthenticatedOSPF
+ negotiation auto
+ ipv6 address FE80::2 link-local
+ ipv6 address 524F:4F54:4954:18::9/126
+!
+interface GigabitEthernet0/0/1
+ description Connection to HO-L3SW2
+ ip address 172.1.8.17 255.255.255.252
+ negotiation auto
+ ipv6 address FE80::2 link-local
+ ipv6 address 524F:4F54:4954:18::17/126
+!
+interface GigabitEthernet0/1/0
+ description Connection to ASA Firewall
+ ip address 172.1.8.2 255.255.255.252
+ ip ospf authentication key-chain AuthenticatedOSPF
+ negotiation auto
+ ipv6 address FE80::2 link-local
+ ipv6 address 524F:4F54:4954:18::2/126
+!
+interface GigabitEthernet0/1/1
+ no ip address
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet0
+ vrf forwarding Mgmt-intf
+ ip address 172.1.30.252 255.255.255.0
+ negotiation auto
+ ipv6 address FE80::2 link-local
+ ipv6 address 524F:4F54:4954:130::252/64
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+!
+router eigrp 4
+ default-metric 10000 100 255 1 1500
+ network 10.10.10.0 0.0.0.255
+ redistribute ospf 1
+!
+router ospf 1
+ router-id 2.2.2.2
+ redistribute eigrp 4 metric 100 subnets
+ network 172.1.8.0 0.0.0.3 area 0
+ network 172.1.8.8 0.0.0.3 area 0
+ network 172.1.8.16 0.0.0.3 area 0
+!
+ip forward-protocol nd
+no ip http server
+no ip http authentication local
+no ip http secure-server
+ip tftp source-interface GigabitEthernet0/0/0
+!
+ip ssh source-interface GigabitEthernet0
+ip ssh version 2
+!
+!
+kron occurrence Backup in 7:0:0 recurring system-startup
+ policy-list RootIT-Device-Backup
+!
+kron policy-list RootIT-Device-Backup
+ cli write mememory
+!
+access-list 10 permit 10.10.10.7
+access-list 10 permit 172.7.0.0 0.0.255.255
+!
+!
+!
+!
+radius-server directed-request
+!
+!
+ipv6 access-list preauth_v6
+ permit udp any any eq domain
+ permit tcp any any eq domain
+ permit icmp any any nd-ns
+ permit icmp any any nd-na
+ permit icmp any any router-solicitation
+ permit icmp any any router-advertisement
+ permit icmp any any redirect
+ permit udp any eq 547 any eq 546
+ permit udp any eq 546 any eq 547
+ deny ipv6 any any
+!
+control-plane
+!
+banner exec ^C
+YOU ARE CONNECTED TOO $(hostname)@$(domain) ON LINE $(line)($(line-desc))
+^C
 !
 line con 0
- logging synchronous
  stopbits 1
 line aux 0
  stopbits 1
 line vty 0 4
- access-class HO_SSH_ACCESS in
- login local
+ logging synchronous
 line vty 5 15
- access-class HO_SSH_ACCESS in
- login local
+ logging synchronous
 !
 !
 !
