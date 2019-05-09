@@ -357,6 +357,15 @@ interface Vlan30
  glbp 10 authentication md5 key-chain AuthenticatedGLBP
  glbp 10 name MANAGEMENT
 !
+interface Vlan40
+ ip address 172.1.40.254 255.255.255.0
+ ip helper-address 172.1.10.253
+ glbp 10 ip 172.1.40.1
+ glbp 10 timers msec 500 2
+ glbp 10 priority 254
+ glbp 10 authentication md5 key-chain AuthenticatedGLBP
+ glbp 10 name DATA
+!
 router ospf 1
  router-id 4.4.4.4
  passive-interface Vlan10
